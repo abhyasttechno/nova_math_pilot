@@ -954,11 +954,15 @@ def submit_feedback():
         return jsonify({"error": "An error occurred while saving feedback."}), 500 # Internal Server 
 
 
-@app.route('/')
-def index():
-    # You could pass data to the template here if needed
-    # For this example, we just render the static template
-    return render_template('dashboard.html')
+@app.route('/hindi')
+def render_index():
+    """Renders the index_hn.html template."""
+    return render_template('index_hn.html')
+
+@app.route('/english')
+def render_index_en():
+    """Renders the index_en.html template."""
+    return render_template('index_en.html')
 
 
 # --- Run the Flask App ---

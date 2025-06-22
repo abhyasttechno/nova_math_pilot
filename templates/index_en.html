@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +13,9 @@
     <!-- Google Fonts (Nunito Sans & Open Sans - from dashboard.html) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap Icons (from dashboard.html) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -20,895 +23,25 @@
     <!-- MathJax Configuration (from original index.html) -->
     <script>
         MathJax = {
-          tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\[', '\\]']],
-            processEscapes: true
-          },
-          svg: {
-            fontCache: 'global'
-          }
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            }
         };
     </script>
     <!-- MathJax Library (from original index.html) -->
     <script type="text/javascript" id="MathJax-script" async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
-    </script>
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+        </script>
 
     <!-- Custom CSS: Content of style-p.css embedded here, plus necessary overrides/additions from index.html -->
-    <style>
-        /* EMBEDDED CONTENT OF style-p.css */
-        /* novamaths-style.css */
-
-        /*--------------------------------------------------------------
-        # General Styles & Variables
-        --------------------------------------------------------------*/
-        :root {
-          --nm-primary-blue: #2D8CFF;
-          --nm-secondary-yellow: #FFD166;
-          --nm-neutral-light: #F8F9FA;
-          --nm-neutral-mid: #E9ECEF;
-          --nm-text-dark: #343A40;
-          --nm-text-light: #6C757D;
-          --nm-success-green: #28A745;
-          --nm-warning-orange: #FF9F43;
-          --nm-error-red: #EA5455;
-          --nm-font-heading: 'Nunito Sans', sans-serif;
-          --nm-font-body: 'Open Sans', sans-serif;
-          --nm-border-radius: 0.5rem; /* Consistent border radius */
-          --nm-box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        }
-
-        body {
-          font-family: var(--nm-font-body);
-          color: var(--nm-text-dark);
-          background-color: var(--nm-neutral-light); /* Lighter page background */
-          line-height: 1.6;
-          overflow-x: hidden; /* Prevent horizontal scroll issues from original index.html */
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-          font-family: var(--nm-font-heading);
-          font-weight: 600;
-          color: var(--nm-text-dark); /* dashboard.html uses --nm-text-dark for headings */
-        }
-
-        .nm-container { /* Custom container for consistent padding if needed */
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-          padding-left: 15px;
-          padding-right: 15px;
-        }
-
-        /* Specific styles for solution display radio buttons (from dashboard.html) */
-        .solution-mode-selector {
-            font-size: 0.9rem;
-            color: var(--nm-text-light);
-             /* Added from index.html structure for these radios */
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            border-bottom: 1px solid var(--nm-neutral-mid); /* Match original index.html separator */
-            padding-bottom: 1rem; /* Match original index.html spacing */
-            margin-bottom: 1rem; /* Match original index.html spacing */
-        }
-
-        .solution-mode-selector .form-check-input:checked {
-            background-color: var(--nm-primary-blue);
-            border-color: var(--nm-primary-blue);
-        }
-        .solution-mode-selector strong { /* From index.html */
-            margin-right: 1.5rem;
-            margin-bottom: 0.5rem; /* For mobile */
-        }
-
-
-        /* Specific styles for step-by-step controls (from dashboard.html) */
-        #stepByStepControls button {
-            padding: 0.5rem 1.5rem;
-        }
-        /*--------------------------------------------------------------
-        # Navbar (from dashboard.html)
-        --------------------------------------------------------------*/
-        .navbar { /* From index.html, for transition if needed, though dashboard specific styling will override */
-            transition: background-color 0.3s ease-in-out;
-        }
-        .navbar-brand {
-          font-family: var(--nm-font-heading);
-          font-weight: 700;
-          font-size: 1.5rem;
-          color: var(--nm-primary-blue) !important;
-        }
-
-        .navbar-nav .nav-link {
-          font-weight: 500;
-          color: var(--nm-text-light); /* dashboard.html color */
-        }
-        .navbar-nav .nav-link.active,
-        .navbar-nav .nav-link:hover {
-          color: var(--nm-primary-blue);
-        }
-        /* Style for the "Login / School Portal" button from index.html, adapted to dashboard look */
-        .navbar .btn-outline-primary {
-             border-radius: var(--nm-border-radius); /* dashboard.html consistency */
-             padding: 0.4rem 1rem;
-             font-weight: 500;
-             border-color: var(--nm-primary-blue);
-             color: var(--nm-primary-blue);
-         }
-         .navbar .btn-outline-primary:hover {
-             background-color: var(--nm-primary-blue);
-             color: white;
-         }
-
-
-        /*--------------------------------------------------------------
-        # Hero Section (from dashboard.html)
-        --------------------------------------------------------------*/
-        .hero-section {
-          padding: 60px 0;
-          text-align: center;
-          background: linear-gradient(135deg, #e0f7ff 0%, var(--nm-neutral-light) 100%); /* Soft gradient */
-        }
-        .hero-section h1 {
-          font-size: 2.8rem;
-          font-weight: 700;
-          margin-bottom: 0.75rem;
-          color: var(--nm-text-dark);
-        }
-        .hero-section .lead {
-          font-size: 1.25rem;
-          color: var(--nm-text-light);
-          margin-bottom: 1.5rem;
-          max-width: 700px;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .btn-hero {
-          background-color: var(--nm-primary-blue);
-          color: white;
-          padding: 0.75rem 2rem;
-          font-size: 1.1rem;
-          font-weight: 600;
-          border-radius: var(--nm-border-radius);
-          transition: background-color 0.3s ease;
-        }
-        .btn-hero:hover {
-          background-color: #1a75e0; /* Darker primary blue */
-        }
-
-        /*--------------------------------------------------------------
-        # Main Content Sections & Cards (from dashboard.html)
-        --------------------------------------------------------------*/
-        .section-title {
-          text-align: center;
-          margin-bottom: 2rem;
-          font-size: 2rem;
-          font-weight: 700;
-        }
-
-        .nm-card {
-          background-color: #fff;
-          border: 1px solid var(--nm-neutral-mid);
-          border-radius: var(--nm-border-radius);
-          box-shadow: var(--nm-box-shadow);
-          margin-bottom: 2rem;
-          padding: 1.5rem; /* Default padding for cards */
-        }
-        .nm-card .card-header { /* This applies to headers inside nm-card */
-          background-color: transparent;
-          border-bottom: 1px solid var(--nm-neutral-mid);
-          padding: 1rem 1.5rem;
-          margin: -1.5rem -1.5rem 1.5rem -1.5rem; /* Adjust to fit padding */
-          font-weight: 600;
-          font-size: 1.1rem;
-        }
-        /* Card body adjustments from index.html if nm-card is used for unified input */
-        .nm-card > .card-body.p-0 { /* For the solver input card */
-            padding: 0 !important;
-        }
-
-
-        /*--------------------------------------------------------------
-        # Problem Input Area (Styles from dashboard.html, HTML from index.html)
-        --------------------------------------------------------------*/
-        .problem-input-section {
-          margin-top: 2rem; /* Add some top margin */
-        }
-        /* .unified-input-bar styling from index.html adapted to dashboard.html variables */
-        .unified-input-bar {
-            background-color: #fff; /* dashboard.html background for input area */
-            border: 1px solid var(--nm-neutral-mid); /* dashboard.html border */
-            box-shadow: var(--nm-box-shadow); /* dashboard.html shadow */
-            padding: 0.5rem 1rem; /* dashboard.html padding */
-            display: flex;
-            align-items: center;
-            border-radius: var(--nm-border-radius); /* dashboard.html radius */
-        }
-        .unified-input-bar textarea {
-            background-color: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            outline: none !important;
-            resize: none;
-            overflow-y: hidden;
-            line-height: 1.6;
-            padding: 0.5rem; /* Match dashboard.html textarea padding */
-            font-size: 1rem;
-            flex-grow: 1;
-            margin: 0 0.5rem; /* Spacing around textarea */
-        }
-        .unified-input-bar .btn-icon {
-             background-color: transparent;
-             border: none;
-             color: var(--nm-text-light); /* dashboard.html icon color */
-             padding: 0.5rem;
-             width: 40px; /* Fixed size from index.html for consistency */
-             height: 40px; /* Fixed size */
-             display: flex;
-             justify-content: center;
-             align-items: center;
-             transition: color 0.2s ease, background-color 0.2s ease;
-             flex-shrink: 0;
-             border-radius: 50%; /* Round buttons */
-         }
-         .unified-input-bar .btn-icon:hover {
-             color: var(--nm-primary-blue); /* dashboard.html hover color */
-             background-color: var(--nm-neutral-light); /* dashboard.html hover bg */
-         }
-         /* Send Button / Solve Button (#solveUnifiedButton from index.html) */
-         #solveUnifiedButton {
-            background: var(--nm-primary-blue); /* dashboard.html primary */
-            color: white;
-            border: none;
-            border-radius: var(--nm-border-radius); /* dashboard.html radius for non-icon button */
-            width: auto; /* Allow it to size with content or spinner */
-            min-width: 40px; /* Minimum width like icon buttons */
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-left: 0.5rem;
-            padding: 0 0.75rem; /* Padding for text/icon */
-            transition: background-color 0.2s ease, opacity 0.2s ease;
-            flex-shrink: 0;
-         }
-         #solveUnifiedButton:hover {
-             background-color: #1a75e0; /* Darker primary */
-         }
-         #solveUnifiedButton:disabled {
-             opacity: 0.65;
-             cursor: not-allowed;
-             background-color: var(--nm-text-light);
-         }
-        /* Spinner inside solve button (from index.html, ensure it works with dashboard button style) */
-        #solveUnifiedButton .loading-spinner {
-            /* display: none; JS handles this */
-            width: 1.25rem; /* Adjust size if needed */
-            height: 1.25rem;
-        }
-        /* Voice recording button style from index.html */
-        #startSpeechButton.recording {
-              color: white;
-              background-color: var(--nm-error-red); /* dashboard.html error red */
-        }
-        #startSpeechButton.recording:hover {
-             background-color: #c82333; /* Darker red */
-        }
-        #selectedFileInfo {
-          font-size: 0.875rem;
-          margin-top: 0.5rem;
-          padding-left: 1rem; /* Align with input bar content */
-          color: var(--nm-text-light);
-        }
-        #selectedFileInfo .clear-file {
-          text-decoration: none;
-          color: var(--nm-error-red);
-        }
-
-
-        /*--------------------------------------------------------------
-        # Solution Display (Adapting index.html's structure to dashboard.html's card style)
-        --------------------------------------------------------------*/
-        #solution-display-card .card-body {
-            padding: 1.5rem;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        /* Original Question display block from dashboard.html */
-        .original-question-display {
-            margin-bottom: 1.5rem;
-            padding: 1rem 1.5rem;
-            border: 1px solid var(--nm-neutral-mid);
-            border-radius: var(--nm-border-radius);
-            background-color: var(--nm-neutral-light);
-        }
-        .original-question-display h5 {
-            color: var(--nm-text-dark);
-            font-size: 1.1rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
-        /* Text content styling (from dashboard.html, applying to index.html's dynamic content) */
-        #solution-display-card .original-question-display div,
-        #solution-display-card .step-content, /* Targets class from index.html JS */
-        #solution-display-card .final-answer-content { /* Targets class from index.html JS */
-            font-family: var(--nm-font-body);
-            line-height: 1.7;
-            color: var(--nm-text-dark);
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            overflow: visible;
-            overflow-x: hidden;
-            overflow-y: hidden;
-        }
-
-        /* Styling for .step and .final-answer from index.html's JS to match dashboard.html's carded steps */
-        #solutionOutput .step { /* This is the dynamically created div from index.html JS */
-          border: 1px solid var(--nm-neutral-mid);
-          border-radius: var(--nm-border-radius);
-          margin-bottom: 1rem;
-          padding: 1rem 1.5rem;
-          background-color: #fff;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-          transition: box-shadow 0.3s ease;
-          cursor: pointer; /* Kept from index.html for clarification */
-        }
-        #solutionOutput .step:hover { /* interactive-step hover from index.html */
-          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-          /* transform: translateY(-2px); from index.html, optional */
-        }
-        #solutionOutput .step h5 { /* Step X: inside .step */
-          color: var(--nm-primary-blue);
-          font-weight: 700;
-          margin-bottom: 0.5rem;
-          font-size: 1.1rem; /* Match dashboard.html card header */
-          padding-left: 0;
-          border-bottom: 1px solid var(--nm-neutral-light);
-          padding-bottom: 0.5rem;
-        }
-        #solutionOutput .final-answer { /* This is the dynamically created div from index.html JS */
-          background-color: #e6ffed; /* Light green from dashboard.html */
-          border: 1px solid #b8f5c9; /* Matching border */
-          padding: 1rem 1.5rem;
-          border-radius: var(--nm-border-radius);
-          margin-top: 1.5rem; /* Spacing from index.html */
-        }
-        #solutionOutput .final-answer strong { /* "Final Answer:" text */
-          color: var(--nm-success-green);
-          font-weight: 700; /* dashboard.html style */
-          display: block; /* Ensure it's on its own line before content */
-          margin-bottom: 0.5rem;
-        }
-        #solutionOutput .step-content, #solutionOutput .final-answer-content {
-             white-space: pre-wrap; /* MODIFIED: Was 'normal'. This preserves newlines and spaces from AI output. */
-             font-family: var(--nm-font-body); /* dashboard.html font */
-             line-height: 1.7;
-             color: var(--nm-text-dark);
-             margin-top: 0.5rem; /* Space below step title/final answer label */
-        }
-        /* Solution Output Badge "AI Solution" from index.html */
-       
-         #copySolutionButton { /* Style from index.html, make it fit dashboard theme */
-             border-radius: var(--nm-border-radius);
-             font-size: 0.875rem;
-         }
-
-
-        /* Pre-emptive Scaffolding (from dashboard.html styles) */
-        #preemptiveScaffolding {
-            border-left: 4px solid var(--nm-warning-orange);
-            background-color: #fff8e1; /* Light yellow */
-            color: #54431a; /* Darker text for readability */
-            padding: 1rem 1.5rem;
-            border-radius: var(--nm-border-radius);
-        }
-        #preemptiveScaffolding strong {
-            color: #c08000; /* Stronger orange */
-            font-weight: 700;
-        }
-        #preemptiveScaffolding ul {
-            margin-bottom: 0;
-            padding-left: 1.25rem; /* Indent list items */
-        }
-
-        /* Styles for uploaded question image card from index.html */
-        #uploadedQuestionImagePreviewArea .card { /* Adapting index.html's card to nm-card */
-            background-color: #fff;
-            border: 1px solid var(--nm-neutral-mid);
-            border-radius: var(--nm-border-radius);
-            box-shadow: var(--nm-box-shadow);
-            /* padding: 1.5rem; /* Default padding for cards - might not be needed if card-body handles it */
-        }
-        #uploadedQuestionImagePreviewArea .card-header {
-            background-color: transparent;
-            border-bottom: 1px solid var(--nm-neutral-mid);
-            padding: 1rem 1.5rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-         #uploadedQuestionImagePreviewArea .card-body {
-            padding: 1rem; /* Padding for the image */
-        }
-        #questionImageElement {
-            max-height: 300px;
-            border: 1px solid var(--nm-neutral-mid);
-            border-radius: .25rem;
-        }
-
-
-        /*--------------------------------------------------------------
-        # MathJax & Diagrams
-        --------------------------------------------------------------*/
-        mjx-container {
-            line-height: normal !important;
-            vertical-align: middle;
-            word-wrap: normal;
-            overflow-wrap: normal;
-            display: inline-block !important;
-            overflow: visible;
-            overflow-x: visible;
-            overflow-y: visible;
-        }
-        mjx-container[display="true"] {
-            display: block !important;
-            margin: 1em 0;
-            max-width: 100% !important;
-            overflow-x: auto;
-            overflow-y: hidden;
-        }
-        MJX_Assistive_MathML { display: none !important; }
-
-        /* SVG Diagram container styles from index.html (IMPORTANT FOR FUNCTIONALITY) */
-        .solution-diagram-container {
-            width: 100%;
-            margin: 15px 0;
-            padding: 0;
-            overflow: hidden; /* Important for SVG */
-            border: 1px solid var(--nm-neutral-mid); /* dashboard.html border */
-            border-radius: var(--nm-border-radius); /* dashboard.html radius */
-            background-color: #fdfdfd;
-            display: flex; /* Center SVG if it's smaller than container */
-            justify-content: center;
-            align-items: center;
-        }
-        .solution-diagram-container svg {
-            display: block;
-            width: 100%;
-            height: auto;
-            max-height: 400px; /* From index.html */
-        }
-
-
-        /*--------------------------------------------------------------
-        # Identified Concepts & Practice Problems (dashboard.html styles)
-        --------------------------------------------------------------*/
-        .btn-quick-refresher, .btn-generate-practice {
-          background-color: var(--nm-primary-blue);
-          color: white;
-          border-color: var(--nm-primary-blue);
-          border-radius: var(--nm-border-radius); /* Consistent radius */
-          padding: 0.5rem 1rem; /* Consistent padding */
-        }
-        .btn-quick-refresher:hover, .btn-generate-practice:hover {
-          background-color: #1a75e0; /* Darker blue */
-        }
-        /* Styling for .practice-problem from index.html's JS to match dashboard.html's item style */
-        #practice-problems-output .practice-problem { /* class from index.html JS */
-          padding: 0.75rem 1rem;
-          border: 1px solid var(--nm-neutral-mid);
-          border-radius: var(--nm-border-radius);
-          margin-bottom: 0.5rem;
-          cursor: pointer;
-          transition: background-color 0.2s ease, border-color 0.2s ease;
-          background-color: #fff; /* Ensure white background */
-        }
-        #practice-problems-output .practice-problem:hover { /* interactive-practice hover from index.html */
-          background-color: var(--nm-neutral-light);
-          border-color: var(--nm-primary-blue);
-        }
-        #practice-problems-output .problem-number { /* From index.html */
-             font-weight: bold;
-             color: var(--nm-primary-blue); /* dashboard.html primary color */
-             margin-right: 0.5em;
-        }
-        /* Practice controls from index.html, adapted */
-        #practice-controls {
-             display: flex;
-             align-items: center;
-             gap: 1rem; /* Spacing */
-             background-color: var(--nm-neutral-light); /* dashboard.html light bg */
-             padding: 1rem;
-             border-radius: var(--nm-border-radius);
-             margin-bottom: 1rem;
-             flex-wrap: wrap;
-        }
-         #practice-controls label {
-              font-weight: 600;
-              color: var(--nm-text-dark);
-         }
-         #practiceProblemSlider {
-              flex-grow: 1;
-              max-width: 300px;
-              cursor: pointer;
-         }
-        #practiceProblemCount {
-             font-weight: 700;
-             min-width: 25px;
-             text-align: right;
-             color: var(--nm-text-dark);
-             background-color: var(--nm-neutral-mid); /* Badge like bg */
-             padding: 0.25rem 0.5rem;
-             border-radius: 0.25rem;
-        }
-        #generatePracticeButton .loading-spinner { display: none; } /* JS handles */
-        #practice-loading {
-             text-align: center;
-             padding: 20px;
-             color: var(--nm-text-light);
-        }
-        #practice-loading .spinner-border { color: var(--nm-primary-blue) !important; }
-
-
-        /*--------------------------------------------------------------
-        # Features & Concepts Library (from index.html, styled with nm-card)
-        --------------------------------------------------------------*/
-        /* General accordion styling to match dashboard.html theme */
-        .accordion-button {
-             font-weight: 600;
-             color: var(--nm-text-dark);
-             background-color: #fff; /* Card background */
-        }
-        .accordion-button:not(.collapsed) {
-             color: var(--nm-primary-blue);
-             background-color: var(--nm-neutral-light); /* Light blue when open */
-             box-shadow: inset 0 -1px 0 rgba(0,0,0,.1);
-        }
-        .accordion-button:focus {
-            box-shadow: 0 0 0 0.25rem rgba(45, 140, 255, 0.25); /* --nm-primary-blue focus */
-            border-color: var(--nm-primary-blue);
-        }
-        .accordion-body {
-             line-height: 1.7;
-             color: var(--nm-text-dark);
-             background-color: #fff; /* Ensure body matches card */
-        }
-        .accordion-item {
-            background-color: #fff;
-            border: 1px solid var(--nm-neutral-mid);
-        }
-        .accordion-item:first-of-type { border-top-left-radius: var(--nm-border-radius); border-top-right-radius: var(--nm-border-radius); }
-        .accordion-item:last-of-type { border-bottom-left-radius: var(--nm-border-radius); border-bottom-right-radius: var(--nm-border-radius); }
-        .feature-icon { /* From index.html */
-             font-size: 1.5rem; /* dashboard.html consistent icon size */
-             margin-right: 1rem;
-             vertical-align: middle;
-             color: var(--nm-primary-blue);
-        }
-        /* Concepts Library Tabs from index.html */
-        #concepts-library .nav-tabs {
-             border-bottom: 2px solid var(--nm-primary-blue);
-             margin-bottom: 1.5rem;
-        }
-        #concepts-library .nav-link {
-             border: none;
-             border-bottom: 3px solid transparent;
-             color: var(--nm-text-light);
-             font-weight: 600;
-             margin-right: 1rem;
-             padding: 0.5rem 1rem; /* Adjust padding */
-        }
-        #concepts-library .nav-link:hover {
-             border-color: var(--nm-neutral-mid);
-             color: var(--nm-text-dark);
-        }
-        #concepts-library .nav-link.active {
-             color: var(--nm-primary-blue);
-             border-color: var(--nm-primary-blue);
-             background-color: transparent;
-        }
-
-
-        /*--------------------------------------------------------------
-        # Professor Owl (dashboard.html styles)
-        --------------------------------------------------------------*/
-        #ama-chatbot-section .nm-card .card-body { /* Target card body for ama specifically */
-          padding: 0; /* Remove card padding for chat window */
-        }
-        #chat-window {
-          height: 350px;
-          overflow-y: auto;
-          padding: 1rem;
-          border: 1px solid var(--nm-neutral-mid);
-          border-radius: var(--nm-border-radius) var(--nm-border-radius) 0 0; /* Round top corners */
-          background-color: #fff; /* Ensure white background for chat */
-        }
-        /* User and Bot messages from index.html, adapted to dashboard.html variables */
-        #chat-window .user-message {
-             display: flex;
-             justify-content: flex-end;
-             margin: 10px 0;
-        }
-        #chat-window .user-message > div {
-             background: var(--nm-primary-blue);
-             color: white;
-             padding: 0.75rem 1rem; /* dashboard.html padding */
-             border-radius: var(--nm-border-radius) var(--nm-border-radius) 0 var(--nm-border-radius); /* dashboard.html style */
-             max-width: 80%;
-             word-wrap: break-word;
-             box-shadow: var(--nm-box-shadow);
-        }
-        #chat-window .bot-message {
-             display: flex;
-             align-items: flex-start;
-             margin: 10px 0;
-        }
-        #chat-window .bot-message img {
-              width: 35px;
-              height: 35px;
-              margin-right: 0.75rem; /* dashboard.html spacing */
-              flex-shrink: 0;
-              border-radius: 50%;
-              background-color: #fff;
-              padding: 2px;
-              border: 1px solid var(--nm-neutral-mid);
-        }
-        #chat-window .bot-message > div {
-             background: var(--nm-neutral-light); /* dashboard.html bg */
-             color: var(--nm-text-dark);
-             padding: 0.75rem 1rem;
-             border-radius: var(--nm-border-radius) var(--nm-border-radius) var(--nm-border-radius) 0;
-             max-width: 80%;
-             word-wrap: break-word;
-             box-shadow: var(--nm-box-shadow);
-        }
-        #chat-window .bot-message b { color: var(--nm-primary-blue); } /* Professor Owl name */
-
-        /* Typing indicator from index.html */
-        #typing { display: flex; align-items: center; margin: 10px 0; font-style: italic; color: var(--nm-text-light); }
-        #typing img { width: 35px; height: 35px; margin-right: 0.75rem; flex-shrink: 0; }
-        #typing div { background: var(--nm-neutral-light); padding: 0.75rem 1rem; border-radius: var(--nm-border-radius) var(--nm-border-radius) var(--nm-border-radius) 0; max-width: 75%; box-shadow: var(--nm-box-shadow); }
-        #dots { display: inline-block; }
-
-        /* AMA Input group from index.html structure, dashboard.html style */
-        #ama-input-group { /* This is the input-group div from dashboard.html */
-          border-top: 1px solid var(--nm-neutral-mid);
-          border-radius: 0 0 var(--nm-border-radius) var(--nm-border-radius);
-        }
-        #ama-input { /* From index.html JS target */
-          border-radius: 0 0 0 var(--nm-border-radius);
-          border-right: none;
-          box-shadow: none !important;
-          padding: 0.75rem 1rem; /* dashboard.html input padding */
-          font-size: 1rem;
-          border-color: var(--nm-neutral-mid); /* Ensure border is visible */
-        }
-        #ama-input:focus {
-          border-color: var(--nm-primary-blue); /* dashboard.html focus */
-          box-shadow: 0 0 0 0.25rem rgba(45, 140, 255, 0.25) !important;
-        }
-        /* Send button for AMA, ID 'send-button' from index.html JS */
-        #send-button { /* ID from index.html's JS */
-          background-color: var(--nm-primary-blue);
-          border-color: var(--nm-primary-blue);
-          color: white;
-          border-radius: 0 0 var(--nm-border-radius) 0;
-          padding: 0.75rem 1.25rem; /* dashboard.html padding */
-        }
-        #send-button:hover {
-            background-color: #1a75e0; /* Darker blue */
-        }
-        #send-button:disabled {
-            opacity: 0.65;
-            background-color: var(--nm-text-light);
-        }
-        #send-button .loading-spinner { display: none; } /* JS handles */
-
-        /* Sample Question Styling for Professor Owl (from dashboard.html) */
-        .sample-question-container {
-            text-align: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: var(--nm-border-radius);
-        }
-        .sample-question-container h4 {
-            color: var(--nm-primary-blue);
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        .sample-question-container .text-muted { margin-bottom: 1.5rem; }
-        .sample-question-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-        .sample-question-chip {
-            background-color: var(--nm-neutral-light);
-            color: var(--nm-primary-blue);
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--nm-primary-blue);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease;
-            font-size: 0.9rem;
-        }
-        .sample-question-chip:hover { background-color: var(--nm-primary-blue); color: white; }
-
-
-        /*--------------------------------------------------------------
-        # Feedback Section (dashboard.html styles)
-        --------------------------------------------------------------*/
-        #feedback-section .nm-card {
-          padding: 2rem;
-        }
-        .rating {
-          display: flex;
-          flex-direction: row-reverse;
-          justify-content: center;
-        }
-        .rating input[type="radio"] { display: none; }
-        .rating label {
-          color: #ccc;
-          cursor: pointer;
-          font-size: 2.5rem;
-          transition: color 0.2s;
-          margin: 0 0.2rem;
-        }
-        /* Updated: Using Bootstrap Icons within labels, so style the <i> tag */
-        .rating input[type="radio"]:checked ~ label i,
-        .rating label:hover i,
-        .rating label:hover ~ label i {
-          color: var(--nm-secondary-yellow);
-        }
-        .rating label i { /* Default color for star icons */
-            color: #ccc;
-            transition: color 0.2s;
-        }
-        #feedbackForm.was-validated .rating:has(input[type="radio"]:invalid:not(:checked)) + #ratingError {
-            display: block !important;
-        }
-        #ratingError {
-            color: var(--nm-error-red);
-            font-size: 0.875em;
-            margin-top: 0.25rem;
-            display: none; /* Hidden by default */
-        }
-        #submitFeedbackButton { /* ID from index.html JS */
-          background-color: var(--nm-primary-blue);
-          border-color: var(--nm-primary-blue);
-          color: white;
-          padding: 0.75rem;
-          font-size: 1.1rem; /* Larger text */
-        }
-        #submitFeedbackButton:hover {
-            background-color: #1a75e0;
-        }
-        #submitFeedbackButton .loading-spinner { display: none; }
-
-
-        /*--------------------------------------------------------------
-        # Footer (dashboard.html styles)
-        --------------------------------------------------------------*/
-        .footer {
-          background-color: var(--nm-text-dark);
-          color: rgba(255, 255, 255, 0.7);
-          padding: 40px 0 20px;
-          margin-top: 3rem;
-        }
-        .footer h5 { color: #fff; margin-bottom: 1rem; }
-        .footer p, .footer ul li a { color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; }
-        .footer ul { padding-left: 0; list-style: none; }
-        .footer ul li { margin-bottom: 0.5rem; }
-        .footer ul li a:hover { color: #fff; text-decoration: none; }
-        .footer hr { border-color: rgba(255,255,255,0.1); }
-        .footer .small { font-size: 0.8rem; }
-
-        /*--------------------------------------------------------------
-        # Modals (dashboard.html styles)
-        --------------------------------------------------------------*/
-        .modal-content {
-          border-radius: var(--nm-border-radius);
-          border: none;
-          box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
-        }
-        .modal-header {
-          background-color: var(--nm-neutral-light);
-          border-bottom: 1px solid var(--nm-neutral-mid);
-          padding: 1rem 1.5rem;
-        }
-        .modal-header .modal-title { font-weight: 600; }
-        .modal-body { padding: 1.5rem; }
-        .modal-footer {
-          background-color: var(--nm-neutral-light);
-          border-top: 1px solid var(--nm-neutral-mid);
-          padding: 1rem 1.5rem;
-        }
-        .modal-body .bg-light.border.rounded { /* For original step content, etc. */
-          background-color: var(--nm-neutral-light) !important;
-          border-color: var(--nm-neutral-mid) !important;
-          padding: 0.75rem 1rem;
-        }
-        .loading-spinner-modal {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        /* Clarification Modal specific button (from index.html JS) */
-        #submitClarificationButton {
-            background: var(--nm-primary-blue);
-            color: white;
-            border: none;
-            border-radius: var(--nm-border-radius);
-            padding: 0.5rem 1rem;
-        }
-        #submitClarificationButton:hover { background: #1a75e0; }
-        #submitClarificationButton:disabled { opacity: 0.65; background: var(--nm-text-light); }
-        #submitClarificationButton .loading-spinner { display:none; } /* JS will handle */
-        #submitClarificationButton .button-icon { margin-right: 0.5em; } /* For dashboard.html icon */
-
-        /* Practice Check Modal button (from index.html JS) */
-        #submitPracticeCheckButton {
-            background: var(--nm-success-green);
-            color: white;
-            border: none;
-            border-radius: var(--nm-border-radius);
-            padding: 0.5rem 1rem;
-        }
-        #submitPracticeCheckButton:hover { background: #1e7e34; } /* Darker green */
-        #submitPracticeCheckButton:disabled { opacity: 0.65; background: var(--nm-text-light); }
-        #submitPracticeCheckButton .loading-spinner { display:none; }
-        #submitPracticeCheckButton .button-icon { margin-right: 0.5em; }
-
-        /* Refresher Modal from index.html */
-         #refresherModal .modal-title { color: var(--nm-text-dark); font-weight: 600; }
-         #refresherModal .modal-body h6 { color: var(--nm-primary-blue); margin-top: 1rem; margin-bottom: 0.5rem; font-size: 1.1rem; }
-         #refresherModal .refresher-content-area {
-             max-height: 250px; /* Adjusted height */
-             overflow-y: auto;
-             padding: 1rem;
-             border: 1px solid var(--nm-neutral-mid);
-             border-radius: var(--nm-border-radius);
-             background-color: var(--nm-neutral-light);
-             margin-bottom: 1rem;
-             white-space: pre-wrap;
-             font-family: var(--nm-font-body);
-             line-height: 1.7;
-         }
-         #refresherModal .loading-spinner-modal .spinner-border { color: var(--nm-primary-blue) !important; }
-
-        /*--------------------------------------------------------------
-        # Utility & Animation Classes (from dashboard.html)
-        --------------------------------------------------------------*/
-        .fade-in {
-          animation: fadeInAnimation ease 0.5s;
-          animation-iteration-count: 1;
-          animation-fill-mode: forwards;
-        }
-        @keyframes fadeInAnimation {
-          0% { opacity: 0; transform: translateY(10px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Loading spinner general rules (JS will toggle specific spinners) */
-        .loading-spinner { display: none; } /* Hidden by default */
-        button.loading .loading-spinner { display: inline-block !important; }
-        button.loading .button-text-content { visibility: hidden; }
-        button .button-text-content { transition: opacity 0.3s ease; }
-        button.loading .button-text-content { opacity: 0; }
-
-        .pdf-export {
-          background: #fff !important;
-          box-shadow: none !important;
-          border: 1px solid #eee !important;
-          color: #222 !important;
-          margin: 0 auto !important;
-          min-height: 0 !important;
-          width: 100% !important;
-          display: block !important;
-          border-radius: 16px !important;
-        }
-        .pdf-hide { display: none !important; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
     <!-- Navbar (from dashboard.html, links adapted from index.html) -->
@@ -918,19 +51,23 @@
                 <i class="bi bi-calculator-fill me-2 fs-4" style="color: var(--nm-primary-blue);"></i>
                 Nova Maths
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link active" href="#solver-section-anchor">Solver</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#features-section-anchor">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#concepts-library-anchor">Concepts</a></li>
                     <li class="nav-item"><a class="nav-link" href="#professor-owl-anchor">Professor Owl</a></li>
                     <li class="nav-item"><a class="nav-link" href="#feedback-anchor">Feedback</a></li>
+                    <!-- Display Logged-in Username -->
+                    {% if user_name %}
+                    <li class="nav-item d-flex align-items-center ms-lg-2 mt-2 mt-lg-0">
+                        <span class="nav-link active">{{ user_name }}</span>
+                    </li>
+                    {% endif %}
                     <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <!-- Original index.html login/portal button -->
-                        <a class="nav-link btn btn-outline-primary" href="#">Login / School Portal</a>
+                        <a class="nav-link btn btn-outline-primary" href="/logout">Logout </a>
                     </li>
                 </ul>
             </div>
@@ -941,7 +78,8 @@
     <header class="hero-section">
         <div class="container nm-container">
             <h1>Unlock Your Math Potential</h1>
-            <p class="lead">Nova Maths provides intelligent, step-by-step assistance to help you conquer any math problem, anytime, anywhere.</p>
+            <p class="lead">Nova Maths provides intelligent, step-by-step assistance to help you conquer any math
+                problem, anytime, anywhere.</p>
             <a href="#solver-section-anchor" class="btn btn-hero">
                 <i class="bi bi-magic me-2"></i> Solve a Problem Now
             </a>
@@ -961,24 +99,38 @@
                         <div class="card-body p-0"> <!-- p-0 from original index.html for input bar -->
                             <!-- Unified Input Bar (from original index.html) -->
                             <div class="unified-input-bar">
-                                <textarea class="form-control" id="mathProblemText" rows="1" placeholder="Type your math problem, speak, or attach file..." style="overflow-y: hidden;"></textarea>
-                                <button type="button" id="startSpeechButton" class="btn btn-icon rounded-circle" aria-label="Start voice input" title="Speak your math problem">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16">
-                                        <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/>
-                                        <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/>
+                                <textarea class="form-control" id="mathProblemText" rows="1"
+                                    placeholder="Type your math problem, speak, or attach file..."
+                                    style="overflow-y: hidden;"></textarea>
+                                <button type="button" id="startSpeechButton" class="btn btn-icon rounded-circle"
+                                    aria-label="Start voice input" title="Speak your math problem">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                        class="bi bi-mic-fill" viewBox="0 0 16 16">
+                                        <path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z" />
+                                        <path
+                                            d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5" />
                                     </svg>
                                 </button>
-                                <button type="button" id="triggerFileInputButton" class="btn btn-icon rounded-circle ms-1" aria-label="Attach file" title="Attach image or PDF">
-                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
-                                         <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z"/>
-                                     </svg>
-                                 </button>
-                                 <input type="file" id="mathProblemFile" accept="image/*,application/pdf" class="d-none">
-                                <button type="button" id="solveUnifiedButton" class="btn d-flex align-items-center justify-content-center px-3" aria-label="Solve problem" title="Solve Problem">
-                                    <span class="spinner-border spinner-border-sm loading-spinner me-2" role="status" aria-hidden="true"></span> <!-- Spinner hidden by CSS initially -->
+                                <button type="button" id="triggerFileInputButton"
+                                    class="btn btn-icon rounded-circle ms-1" aria-label="Attach file"
+                                    title="Attach image or PDF">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                                        class="bi bi-paperclip" viewBox="0 0 16 16">
+                                        <path
+                                            d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z" />
+                                    </svg>
+                                </button>
+                                <input type="file" id="mathProblemFile" accept="image/*,application/pdf" class="d-none">
+                                <button type="button" id="solveUnifiedButton"
+                                    class="btn d-flex align-items-center justify-content-center px-3"
+                                    aria-label="Solve problem" title="Solve Problem">
+                                    <span class="spinner-border spinner-border-sm loading-spinner me-2" role="status"
+                                        aria-hidden="true"></span>
                                     <span class="button-text-content">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd"
+                                                d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5" />
                                         </svg>
                                     </span>
                                 </button>
@@ -989,11 +141,13 @@
                             <div class="mt-3 mb-2 ps-3 solution-mode-selector">
                                 <strong class="me-3 mb-2 mb-md-0">View Steps:</strong>
                                 <div class="form-check form-check-inline me-3 mb-2 mb-md-0">
-                                    <input class="form-check-input" type="radio" name="solutionDisplayMode" id="displayAllSteps" value="all" checked>
+                                    <input class="form-check-input" type="radio" name="solutionDisplayMode"
+                                        id="displayAllSteps" value="all" checked>
                                     <label class="form-check-label" for="displayAllSteps">All at Once</label>
                                 </div>
                                 <div class="form-check form-check-inline mb-2 mb-md-0">
-                                    <input class="form-check-input" type="radio" name="solutionDisplayMode" id="displayOneByOne" value="one-by-one">
+                                    <input class="form-check-input" type="radio" name="solutionDisplayMode"
+                                        id="displayOneByOne" value="one-by-one">
                                     <label class="form-check-label" for="displayOneByOne">One by One</label>
                                 </div>
                                 <!-- NextStepButton moved to be with solution output as per dashboard.html structure -->
@@ -1009,47 +163,44 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10 col-xl-9">
                     <div id="alertBox" class="mb-3"></div> <!-- For status messages -->
-                    
-                    <!-- Preemptive Scaffolding (from original index.html) -->
-                    <div id="preemptiveScaffolding" class="alert alert-warning fade-in" style="display: none; margin-bottom: 1rem;">
+                    <div id="preemptiveScaffolding" class="alert alert-warning fade-in"
+                        style="display: none; margin-bottom: 1rem;">
                         <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Potential Pitfalls:</strong>
                         <ul id="scaffoldingList" class="mb-0 ps-3 mt-2"></ul>
                     </div>
-
-                    <!-- Uploaded Question Image Preview (from original index.html) -->
-                  <!-- Uploaded Question Image Preview (from original index.html) -->
-                <div id="uploadedQuestionImagePreviewArea" class="mt-3" style="display: none;">
-                    <div class="nm-card mb-4"> <!-- Card will take full width of parent column -->
-                        <div class="card-header">
-                            Uploaded Question
-                        </div>
-                        <div class="card-body p-3 text-center"> <!-- Added text-center -->
-                            <img id="questionImageElement" src="#" alt="Question Image" class="img-fluid">
+                    <div id="uploadedQuestionImagePreviewArea" class="mt-3" style="display: none;">
+                        <div class="nm-card mb-4"> <!-- Card will take full width of parent column -->
+                            <div class="card-header">
+                                Uploaded Question
+                            </div>
+                            <div class="card-body p-3 text-center"> <!-- Added text-center -->
+                                <img id="questionImageElement" src="#" alt="Question Image" class="img-fluid">
+                            </div>
                         </div>
                     </div>
-                </div>
                     <!-- Solution Display Card (dashboard.html structure, content from index.html) -->
-               <div id="solution-display-card" class="nm-card mb-4" style="display: none;">
+                    <div id="solution-display-card" class="nm-card mb-4" style="display: none;">
                         <div class="card-header d-flex justify-content-between align-items-center">
-                        <span><i class="bi bi-card-list me-2"></i>Step-by-Step Solution</span>
-                        <!-- Wrapper for button and new badge -->
-                        <div class="d-flex flex-column align-items-end">
-                                <button id="copySolutionButton" class="btn btn-outline-secondary btn-sm mb-1" style="display: none;"> <!-- Added mb-1 for spacing -->
-                                    <i class="bi bi-clipboard me-1"></i> Copy Solution Text
-                                </button>
+                            <span><i class="bi bi-card-list me-2"></i>Step-by-Step Solution</span>
+                            <!-- Wrapper for button and new badge -->
+                            <div class="d-flex flex-column align-items-end">
                                 <!-- NEW AI Solution Badge Element -->
-                                <span id="aiSolutionBadge" class="badge" style="display: none; font-size: 0.8em; padding: 4px 10px; border-radius: 15px; font-weight: 500; background-color: rgba(45, 140, 255, 0.1); color: var(--nm-primary-blue);">AI Solution</span>
-                        </div>
+                                <span id="aiSolutionBadge" class="badge"
+                                    style="display: none; font-size: 0.8em; padding: 4px 10px; border-radius: 15px; font-weight: 500; background-color: rgba(45, 140, 255, 0.1); color: var(--nm-primary-blue);">AI
+                                    Solution</span>
+                            </div>
                         </div>
                         <div class="card-body" id="solutionOutput"> <!-- solutionOutput ID from index.html -->
                             <p class="text-muted">Your step-by-step solution will appear here...</p>
                         </div>
                         <!-- Step-by-Step Controls (from dashboard.html, button ID from index.html) -->
                         <div class="text-center mt-3 p-3 border-top" id="stepByStepControls" style="display: none;">
-                            <button type="button" id="nextStepButton" class="btn btn-secondary"> <!-- ID from index.html -->
+                            <button type="button" id="nextStepButton" class="btn btn-secondary">
+                                <!-- ID from index.html -->
                                 Next Step <i class="bi bi-arrow-right"></i>
                             </button>
-                            <p id="endOfSolutionMessage" class="text-muted mt-2" style="display: none;">End of solution.</p>
+                            <p id="endOfSolutionMessage" class="text-muted mt-2" style="display: none;">End of solution.
+                            </p>
                         </div>
                     </div>
 
@@ -1060,9 +211,12 @@
                         </div>
                         <div class="card-body">
                             <div id="identifiedConceptsList" class="mb-3"></div> <!-- ID from index.html -->
-                            <button type="button" id="quickRefresherButton" class="btn btn-quick-refresher"> <!-- ID from index.html -->
-                                <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
-                                <span class="button-text-content"><i class="bi bi-book-half me-1"></i>Quick Refresher</span>
+                            <button type="button" id="quickRefresherButton" class="btn btn-quick-refresher">
+                                <!-- ID from index.html -->
+                                <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
+                                    aria-hidden="true"></span>
+                                <span class="button-text-content"><i class="bi bi-book-half me-1"></i>Quick
+                                    Refresher</span>
                             </button>
                             <div id="conceptsRefresherAlert" class="mt-3"></div> <!-- ID from index.html -->
                         </div>
@@ -1071,20 +225,28 @@
                     <!-- Practice Problems Card (dashboard.html structure, content from index.html) -->
                     <div id="practice-problems-card" class="nm-card" style="display: none;">
                         <div class="card-header">
-                           <i class="bi bi-pencil-square me-2"></i>Generate Practice Problems
+                            <i class="bi bi-pencil-square me-2"></i>Generate Practice Problems
                         </div>
                         <div class="card-body">
                             <div id="practice-controls" class="mb-3"> <!-- ID from index.html -->
-                                <label for="practiceProblemSlider" class="form-label mb-0 me-2">Number of problems:</label>
-                                <input type="range" class="form-range flex-grow-1" min="1" max="10" step="1" value="3" id="practiceProblemSlider">
-                                <span id="practiceProblemCount" class="badge rounded-pill ms-2" style="min-width: 2em; text-align: center;">3</span>
-                                <button id="generatePracticeButton" class="btn btn-generate-practice ms-3"> <!-- ID from index.html -->
-                                    <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
-                                    <span class="button-text-content"><i class="bi bi-plus-circle-fill me-1"></i>Generate</span>
+                                <label for="practiceProblemSlider" class="form-label mb-0 me-2">Number of
+                                    problems:</label>
+                                <input type="range" class="form-range flex-grow-1" min="1" max="10" step="1" value="3"
+                                    id="practiceProblemSlider">
+                                <span id="practiceProblemCount" class="badge rounded-pill ms-2"
+                                    style="min-width: 2em; text-align: center;">3</span>
+                                <button id="generatePracticeButton" class="btn btn-generate-practice ms-3">
+                                    <!-- ID from index.html -->
+                                    <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
+                                        aria-hidden="true"></span>
+                                    <span class="button-text-content"><i
+                                            class="bi bi-plus-circle-fill me-1"></i>Generate</span>
                                 </button>
                             </div>
-                            <div id="practice-loading" class="text-center" style="display: none;"> <!-- ID from index.html -->
-                                <div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>
+                            <div id="practice-loading" class="text-center" style="display: none;">
+                                <!-- ID from index.html -->
+                                <div class="spinner-border" role="status"><span
+                                        class="visually-hidden">Loading...</span></div>
                                 <p class="mt-2 text-muted">Generating practice problems...</p>
                             </div>
                             <div id="practice-problems-output"> <!-- ID from index.html -->
@@ -1097,10 +259,10 @@
         </section>
 
         <!-- Features Section (from original index.html, styled with nm-card) -->
-      
-       
 
-    
+
+
+
         <!-- Professor Owl Section (dashboard.html structure, content from index.html) -->
         <div id="professor-owl-anchor" class="pt-5"></div>
         <section id="ama-chatbot-section" class="mt-5"> <!-- ID from dashboard.html -->
@@ -1111,9 +273,12 @@
                         <div class="card-body p-0">
                             <div id="chat-window"></div> <!-- ID from index.html -->
                             <div class="input-group" id="ama-input-group"> <!-- Div from dashboard.html for styling -->
-                                <input type="text" id="ama-input" class="form-control" placeholder="Ask your math theory question..."> <!-- ID from index.html -->
-                                <button id="send-button" class="btn btn-primary"> <!-- ID "send-button" from index.html's JS -->
-                                    <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
+                                <input type="text" id="ama-input" class="form-control"
+                                    placeholder="Ask your math theory question..."> <!-- ID from index.html -->
+                                <button id="send-button" class="btn btn-primary">
+                                    <!-- ID "send-button" from index.html's JS -->
+                                    <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
+                                        aria-hidden="true"></span>
                                     <span class="button-text-content"><i class="bi bi-send-fill"></i> Send</span>
                                 </button>
                             </div>
@@ -1130,33 +295,47 @@
             <div class="row justify-content-center">
                 <div class="col-lg-7 col-xl-6">
                     <div class="nm-card">
-                        <p class="text-muted text-center mb-4">Help us improve Nova Maths by sharing your experience.</p>
+                        <p class="text-muted text-center mb-4">Help us improve Nova Maths by sharing your experience.
+                        </p>
                         <form id="feedbackForm" novalidate> <!-- ID from index.html -->
                             <div class="mb-4 text-center">
-                                <label class="form-label d-block mb-2">Your Rating <span class="text-danger">*</span></label>
+                                <label class="form-label d-block mb-2">Your Rating <span
+                                        class="text-danger">*</span></label>
                                 <div class="rating"> <!-- Structure from dashboard.html for Bootstrap Icons -->
-                                    <input type="radio" id="star5" name="rating" value="5" required /><label for="star5" title="5 stars"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star4" name="rating" value="4" required /><label for="star4" title="4 stars"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star3" name="rating" value="3" required /><label for="star3" title="3 stars"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star2" name="rating" value="2" required /><label for="star2" title="2 stars"><i class="bi bi-star-fill"></i></label>
-                                    <input type="radio" id="star1" name="rating" value="1" required /><label for="star1" title="1 star"><i class="bi bi-star-fill"></i></label>
+                                    <input type="radio" id="star5" name="rating" value="5" required /><label for="star5"
+                                        title="5 stars"><i class="bi bi-star-fill"></i></label>
+                                    <input type="radio" id="star4" name="rating" value="4" required /><label for="star4"
+                                        title="4 stars"><i class="bi bi-star-fill"></i></label>
+                                    <input type="radio" id="star3" name="rating" value="3" required /><label for="star3"
+                                        title="3 stars"><i class="bi bi-star-fill"></i></label>
+                                    <input type="radio" id="star2" name="rating" value="2" required /><label for="star2"
+                                        title="2 stars"><i class="bi bi-star-fill"></i></label>
+                                    <input type="radio" id="star1" name="rating" value="1" required /><label for="star1"
+                                        title="1 star"><i class="bi bi-star-fill"></i></label>
                                 </div>
-                                <div class="invalid-feedback text-center" id="ratingError" style="display: none;">Please select a star rating.</div> <!-- ID from index.html -->
+                                <div class="invalid-feedback text-center" id="ratingError" style="display: none;">Please
+                                    select a star rating.</div> <!-- ID from index.html -->
                             </div>
                             <div class="mb-3">
-                                <label for="feedbackEmail" class="form-label">Your Email Address <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" id="feedbackEmail" required placeholder="name@example.com"> <!-- ID from index.html -->
-                                 <div class="invalid-feedback">Please provide a valid email address.</div>
+                                <label for="feedbackEmail" class="form-label">Your Email Address <span
+                                        class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="feedbackEmail" required
+                                    placeholder="name@example.com"> <!-- ID from index.html -->
+                                <div class="invalid-feedback">Please provide a valid email address.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="feedbackText" class="form-label">Detailed Feedback (Optional)</label>
-                                <textarea class="form-control" id="feedbackText" rows="4" placeholder="Share your thoughts..."></textarea> <!-- ID from index.html -->
+                                <textarea class="form-control" id="feedbackText" rows="4"
+                                    placeholder="Share your thoughts..."></textarea> <!-- ID from index.html -->
                             </div>
                             <div id="feedbackAlertBox" class="mb-3"></div> <!-- ID from index.html -->
                             <div class="d-grid">
-                                <button type="submit" id="submitFeedbackButton" class="btn btn-lg"> <!-- ID from index.html, class from dashboard -->
-                                     <span class="spinner-border spinner-border-sm me-2 loading-spinner" role="status" aria-hidden="true"></span>
-                                     <span class="button-text-content"><i class="bi bi-check-circle-fill me-1"></i>Submit Feedback</span>
+                                <button type="submit" id="submitFeedbackButton" class="btn btn-lg">
+                                    <!-- ID from index.html, class from dashboard -->
+                                    <span class="spinner-border spinner-border-sm me-2 loading-spinner" role="status"
+                                        aria-hidden="true"></span>
+                                    <span class="button-text-content"><i class="bi bi-check-circle-fill me-1"></i>Submit
+                                        Feedback</span>
                                 </button>
                             </div>
                         </form>
@@ -1171,108 +350,115 @@
         <div class="container nm-container">
             <div class="row">
                 <div class="col-lg-4 mb-4 mb-lg-0">
-                     <h5>Nova Maths</h5>
-                     <p class="text-muted small">Empowering students with AI-powered math assistance.</p>
+                    <h5>Nova Maths</h5>
+                    <p class="text-muted small">Empowering students with AI-powered math assistance.</p>
                 </div>
-                 <div class="col-lg-2 col-md-3 col-6 mb-3">
-                     <h5>Platform</h5>
-                     <ul class="list-unstyled">
-                         <li><a href="#solver-section-anchor">Solver</a></li>
-                         <li><a href="#features-section-anchor">Features</a></li>
-                         <li><a href="#concepts-library-anchor">Concepts</a></li>
-                         <li><a href="#professor-owl-anchor">Professor Owl</a></li>
-                         <li><a href="#feedback-anchor">Feedback</a></li>
-                     </ul>
-                 </div>
-                 <div class="col-lg-2 col-md-3 col-6 mb-3">
-                      <h5>School Portal</h5>
-                      <ul class="list-unstyled">
-                         <li><a href="#">Login</a></li>
-                         <li><a href="#">Sign Up</a></li>
-                      </ul>
-                 </div>
-                 <div class="col-lg-2 col-md-3 mb-3">
-                     <h5>Support</h5>
-                     <ul class="list-unstyled">
-                         <li><a href="#">Contact Us</a></li>
-                         <li><a href="#">FAQ</a></li>
-                     </ul>
-                 </div>
+                <div class="col-lg-2 col-md-3 col-6 mb-3">
+                    <h5>Platform</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#solver-section-anchor">Solver</a></li>
+                        <li><a href="#professor-owl-anchor">Professor Owl</a></li>
+                        <li><a href="#feedback-anchor">Feedback</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3 col-6 mb-3">
+                    <h5>School Portal</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Login</a></li>
+                        <li><a href="#">Sign Up</a></li>
+                    </ul>
+                </div>
             </div>
             <hr class="my-4">
             <div class="text-center text-muted small">
-                 <p>&copy; 2024 Nova Maths. All rights reserved.</p>
-                 <p>Disclaimer: AI-generated solutions are for guidance only. Always verify critical results.</p>
+                <p>&copy; 2024 Nova Maths. All rights reserved.</p>
+                <p>Disclaimer: AI-generated solutions are for guidance only. Always verify critical results.</p>
             </div>
         </div>
     </footer>
 
     <!-- Modals (Structure from original index.html, styled by dashboard.html theme with icons) -->
-    <div class="modal fade" id="clarifyStepModal" tabindex="-1" aria-labelledby="clarifyStepModalLabel" aria-hidden="true">
+    <div class="modal fade" id="clarifyStepModal" tabindex="-1" aria-labelledby="clarifyStepModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="clarifyStepModalLabel"><i class="bi bi-chat-left-text-fill me-2"></i>Clarify Step</h5>
+                    <h5 class="modal-title" id="clarifyStepModalLabel"><i
+                            class="bi bi-chat-left-text-fill me-2"></i>Clarify Step</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <h6>Original Step Content:</h6>
-                    <div id="modalStepContent" class="mb-3 p-3 bg-light border rounded" style="max-height: 200px; overflow-y: auto;"></div>
+                    <div id="modalStepContent" class="mb-3 p-3 bg-light border rounded"
+                        style="max-height: 200px; overflow-y: auto;"></div>
                     <form id="clarificationForm">
                         <input type="hidden" id="modalStepNumber">
                         <div class="mb-3">
-                            <label for="clarificationQuestion" class="form-label">Ask for more details about this step:</label>
-                            <textarea class="form-control" id="clarificationQuestion" rows="3" placeholder="e.g., Why was this formula used?"></textarea>
+                            <label for="clarificationQuestion" class="form-label">Ask for more details about this
+                                step:</label>
+                            <textarea class="form-control" id="clarificationQuestion" rows="3"
+                                placeholder="e.g., Why was this formula used?"></textarea>
                         </div>
                         <div id="modalAlertBox" class="mb-3"></div>
                         <div id="clarificationResult" class="mt-3" style="display: none;">
                             <h6><i class="bi bi-lightbulb me-2"></i>Clarification:</h6>
-                            <div id="clarificationOutput" class="p-3 border rounded bg-white" style="max-height: 300px; overflow-y: auto;"></div>
+                            <div id="clarificationOutput" class="p-3 border rounded bg-white"
+                                style="max-height: 300px; overflow-y: auto;"></div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="clarificationForm" id="submitClarificationButton" class="btn"> <!-- JS applies specific classes -->
-                         <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
-                         <i class="bi bi-check-circle-fill button-icon me-1"></i> <!-- Icon from dashboard.html -->
-                         Get Clarification
+                    <button type="submit" form="clarificationForm" id="submitClarificationButton" class="btn">
+                        <!-- JS applies specific classes -->
+                        <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
+                            aria-hidden="true"></span>
+                        <i class="bi bi-check-circle-fill button-icon me-1"></i> <!-- Icon from dashboard.html -->
+                        Get Clarification
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="practiceCheckModal" tabindex="-1" aria-labelledby="practiceCheckModalLabel" aria-hidden="true">
+    <div class="modal fade" id="practiceCheckModal" tabindex="-1" aria-labelledby="practiceCheckModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="practiceCheckModalLabel"><i class="bi bi-check2-square me-2"></i>Check Your Practice Solution</h5>
+                    <h5 class="modal-title" id="practiceCheckModalLabel"><i class="bi bi-check2-square me-2"></i>Check
+                        Your Practice Solution</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <h6>Practice Problem:</h6>
-                    <div id="modalPracticeProblemContent" class="mb-3 p-3 bg-light border rounded" style="max-height: 150px; overflow-y: auto;"></div>
+                    <div id="modalPracticeProblemContent" class="mb-3 p-3 bg-light border rounded"
+                        style="max-height: 150px; overflow-y: auto;"></div>
                     <form id="practiceCheckForm">
                         <input type="hidden" id="modalPracticeProblemTextHidden">
                         <div class="mb-3">
-                            <label for="practiceSolutionFile" class="form-label">Upload Your Solution (Image/PDF):</label>
-                            <input class="form-control" type="file" id="practiceSolutionFile" accept="image/*,application/pdf" required>
-                             <div id="practiceSelectedFileInfo" class="form-text mt-1"></div>
+                            <label for="practiceSolutionFile" class="form-label">Upload Your Solution
+                                (Image/PDF):</label>
+                            <input class="form-control" type="file" id="practiceSolutionFile"
+                                accept="image/*,application/pdf" required>
+                            <div id="practiceSelectedFileInfo" class="form-text mt-1"></div>
                         </div>
                         <div id="practiceModalAlertBox" class="mb-3"></div>
                         <div id="practiceCheckResult" class="mt-3" style="display: none;">
                             <h6><i class="bi bi-clipboard2-check-fill me-2"></i>Feedback:</h6>
-                            <div id="practiceCheckOutput" class="p-3 border rounded bg-white" style="max-height: 300px; overflow-y: auto;"></div>
+                            <div id="practiceCheckOutput" class="p-3 border rounded bg-white"
+                                style="max-height: 300px; overflow-y: auto;"></div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" form="practiceCheckForm" id="submitPracticeCheckButton" class="btn"> <!-- JS applies specific classes -->
-                         <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status" aria-hidden="true"></span>
-                         <i class="bi bi-check-lg button-icon me-1"></i> <!-- Icon from dashboard.html -->
-                         Check Solution
+                    <button type="submit" form="practiceCheckForm" id="submitPracticeCheckButton" class="btn">
+                        <!-- JS applies specific classes -->
+                        <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
+                            aria-hidden="true"></span>
+                        <i class="bi bi-check-lg button-icon me-1"></i> <!-- Icon from dashboard.html -->
+                        Check Solution
                     </button>
                 </div>
             </div>
@@ -1283,26 +469,31 @@
         <div class="modal-dialog modal-xl"> <!-- modal-xl from dashboard.html -->
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="refresherModalLabel"><i class="bi bi-book-fill me-2"></i>Quick Refresher: [Concept Name]</h5>
+                    <h5 class="modal-title" id="refresherModalLabel"><i class="bi bi-book-fill me-2"></i>Quick
+                        Refresher: [Concept Name]</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                     <div id="refresherLoadingSpinner" class="loading-spinner-modal" style="display: none;">
+                    <div id="refresherLoadingSpinner" class="loading-spinner-modal" style="display: none;">
                         <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;"></div>
                         <span class="ms-3 text-muted fs-5">Loading refresher content...</span>
                     </div>
-                     <div id="refresherContent" style="display: none;">
+                    <div id="refresherContent" style="display: none;">
                         <h6><i class="bi bi-card-text me-2"></i>Concept Description:</h6>
-                        <div id="refresherConceptDescription" class="refresher-content-area mb-4 p-3 bg-light border rounded"></div>
+                        <div id="refresherConceptDescription"
+                            class="refresher-content-area mb-4 p-3 bg-light border rounded"></div>
                         <h6><i class="bi bi-lightbulb me-2"></i>Example:</h6>
-                        <div id="refresherExample" class="refresher-content-area mb-4 p-3 bg-light border rounded"></div>
+                        <div id="refresherExample" class="refresher-content-area mb-4 p-3 bg-light border rounded">
+                        </div>
                         <h6><i class="bi bi-patch-check-fill me-2"></i>Solved Questions:</h6>
-                        <div id="refresherSolvedQuestions" class="refresher-content-area p-3 bg-light border rounded"></div>
-                     </div>
-                     <div id="refresherError" class="alert alert-danger" style="display: none;"></div>
+                        <div id="refresherSolvedQuestions" class="refresher-content-area p-3 bg-light border rounded">
+                        </div>
+                    </div>
+                    <div id="refresherError" class="alert alert-danger" style="display: none;"></div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button> <!-- dashboard.html style button -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Got it!</button>
+                    <!-- dashboard.html style button -->
                 </div>
             </div>
         </div>
@@ -1353,8 +544,8 @@
         const CLARIFY_API_ENDPOINT = `${API_BASE_URL}/clarify-step`;
         const PRACTICE_API_ENDPOINT = `${API_BASE_URL}/practice`;
         const AMA_API_ENDPOINT = `${API_BASE_URL}/ama`;
-        const CHECK_API_ENDPOINT= `${API_BASE_URL}/check`;
-        const REFRESHER_API_ENDPOINT= `${API_BASE_URL}/refresher`;
+        const CHECK_API_ENDPOINT = `${API_BASE_URL}/check`;
+        const REFRESHER_API_ENDPOINT = `${API_BASE_URL}/refresher`;
         const FEEDBACK_API_ENDPOINT = `${API_BASE_URL}/submit-feedback`;
 
         // --- DOM Elements (most from original index.html) ---
@@ -1387,7 +578,7 @@
         const practiceOutput = document.getElementById('practice-problems-output'); // Inner div
         const practiceLoading = document.getElementById('practice-loading');
 
-         // AMA Chatbot Elements
+        // AMA Chatbot Elements
         const amaInput = document.getElementById('ama-input');
         const sendButton = document.getElementById('send-button'); // Kept original ID for JS
         const chatWindow = document.getElementById('chat-window');
@@ -1428,7 +619,7 @@
         let recognition = null;
 
 
-function simpleMarkdownToHtml(markdownText) {
+        function simpleMarkdownToHtml(markdownText) {
             if (!markdownText) return '';
 
             let html = markdownText;
@@ -1457,13 +648,13 @@ function simpleMarkdownToHtml(markdownText) {
                 processed = processed.replace(/\`(.*?)\`/g, '<code>$1</code>');
                 return processed;
             };
-            
+
             // Process lists line by line, applying inline formatting to list item content
             let listProcessedHtml = "";
             let inListType = null; // 'ul' or 'ol'
             const lines = html.split('\n'); // Split original markdown by single newlines
 
-            for(let i=0; i < lines.length; i++) {
+            for (let i = 0; i < lines.length; i++) {
                 let line = lines[i];
                 let processedLineContent = ""; // Content of the line after list marker removal
                 let listMatch = line.match(/^\s*([\*\-\+])\s+(.*)/) || line.match(/^\s*(\d+)\.\s+(.*)/);
@@ -1471,7 +662,7 @@ function simpleMarkdownToHtml(markdownText) {
                 if (listMatch) {
                     const listCharOrNum = listMatch[1];
                     // Apply inline formatting only to the text part of the list item
-                    const itemText = applyInlineToTextNodes(listMatch[2]); 
+                    const itemText = applyInlineToTextNodes(listMatch[2]);
                     const currentListType = (listCharOrNum === '*' || listCharOrNum === '-' || listCharOrNum === '+') ? 'ul' : 'ol';
 
                     if (inListType !== currentListType) {
@@ -1487,7 +678,7 @@ function simpleMarkdownToHtml(markdownText) {
                     }
                     // For non-list lines, apply inline markdown if it's not a heading or hr
                     if (!line.match(/^<h[1-6]>|^<hr>/)) {
-                         processedLineContent = applyInlineToTextNodes(line);
+                        processedLineContent = applyInlineToTextNodes(line);
                     } else {
                         processedLineContent = line; // Already an HTML block (heading/hr)
                     }
@@ -1509,8 +700,8 @@ function simpleMarkdownToHtml(markdownText) {
                 if (trimmedBlock.length === 0) continue;
 
                 // Check if the block is already a known HTML block element (list, heading, hr)
-                if (trimmedBlock.match(/^<(ul|ol|h[1-6]|hr|li)/i)) { 
-                    finalHtmlOutput += trimmedBlock + '\n'; 
+                if (trimmedBlock.match(/^<(ul|ol|h[1-6]|hr|li)/i)) {
+                    finalHtmlOutput += trimmedBlock + '\n';
                 } else {
                     // It's a paragraph of text. Wrap in <p>.
                     // Convert single newlines within this paragraph block to <br>.
@@ -1518,7 +709,7 @@ function simpleMarkdownToHtml(markdownText) {
                 }
             }
             html = finalHtmlOutput.trim();
-            
+
             // Clean up: remove empty <p> tags that might result from processing
             html = html.replace(/<p>\s*(<br\s*\/?>)?\s*<\/p>/gi, '');
             // Clean up <br> tags right after block openings or before block closings
@@ -1543,20 +734,20 @@ function simpleMarkdownToHtml(markdownText) {
         }
 
         function showButtonLoading(button, loadingText = 'Processing...') {
-             if (!button) return;
-             button.disabled = true;
-             button.classList.add('loading'); // For CSS driven states if any
-             const spinner = button.querySelector('.loading-spinner');
-             const textContent = button.querySelector('.button-text-content');
+            if (!button) return;
+            button.disabled = true;
+            button.classList.add('loading'); // For CSS driven states if any
+            const spinner = button.querySelector('.loading-spinner');
+            const textContent = button.querySelector('.button-text-content');
 
-             if (spinner) spinner.style.display = 'inline-block'; // Original JS way
-             if (textContent) {
-                 if (!button.originalContentHTML) button.originalContentHTML = textContent.innerHTML;
-                 textContent.innerHTML = loadingText;
-             } else { // Fallback for buttons without dedicated text span
-                  if (!button.originalText) button.originalText = button.textContent.trim();
-                 button.textContent = loadingText;
-             }
+            if (spinner) spinner.style.display = 'inline-block'; // Original JS way
+            if (textContent) {
+                if (!button.originalContentHTML) button.originalContentHTML = textContent.innerHTML;
+                textContent.innerHTML = loadingText;
+            } else { // Fallback for buttons without dedicated text span
+                if (!button.originalText) button.originalText = button.textContent.trim();
+                button.textContent = loadingText;
+            }
         }
         function hideButtonLoading(button) {
             if (!button) return;
@@ -1574,13 +765,13 @@ function simpleMarkdownToHtml(markdownText) {
         }
 
         function showFeedbackAlert(message, type = 'danger') {
-             if (!feedbackAlertBox) return;
-             feedbackAlertBox.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            if (!feedbackAlertBox) return;
+            feedbackAlertBox.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
                 ${escapeHtml(message)}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>`;
         }
-        function clearFeedbackAlert() { if (feedbackAlertBox) feedbackAlertBox.innerHTML = '';}
+        function clearFeedbackAlert() { if (feedbackAlertBox) feedbackAlertBox.innerHTML = ''; }
         function showFeedbackButtonLoading(loadingText = 'Submitting...') { if (submitFeedbackButton) showButtonLoading(submitFeedbackButton, loadingText); }
         function hideFeedbackButtonLoading() { if (submitFeedbackButton) hideButtonLoading(submitFeedbackButton); }
 
@@ -1603,7 +794,7 @@ function simpleMarkdownToHtml(markdownText) {
                 const feedback = feedbackText ? feedbackText.value.trim() : '';
 
                 if (rating === null) { // Should be caught by checkValidity, but double check
-                    if(ratingError) ratingError.style.display = 'block';
+                    if (ratingError) ratingError.style.display = 'block';
                     return;
                 }
 
@@ -1636,8 +827,8 @@ function simpleMarkdownToHtml(markdownText) {
         }
 
         function showAlert(message, type = 'danger', container = alertBox) {
-             if (!container) return;
-             container.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            if (!container) return;
+            container.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
                 ${escapeHtml(message)}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>`;
@@ -1651,9 +842,9 @@ function simpleMarkdownToHtml(markdownText) {
             const icon = submitClarificationButton.querySelector('.button-icon');
             const textNode = Array.from(submitClarificationButton.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0);
 
-            if(spinner) spinner.style.display = 'inline-block';
-            if(icon) icon.style.display = 'none'; // Hide icon
-            if(textNode) {
+            if (spinner) spinner.style.display = 'inline-block';
+            if (icon) icon.style.display = 'none'; // Hide icon
+            if (textNode) {
                 if (!submitClarificationButton.originalButtonText) submitClarificationButton.originalButtonText = textNode.textContent;
                 textNode.textContent = ' Getting Clarification...';
             }
@@ -1665,23 +856,23 @@ function simpleMarkdownToHtml(markdownText) {
             const icon = submitClarificationButton.querySelector('.button-icon');
             const textNode = Array.from(submitClarificationButton.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 0);
 
-            if(spinner) spinner.style.display = 'none';
-            if(icon) icon.style.display = 'inline-block'; // Show icon
-            if(textNode && submitClarificationButton.originalButtonText) {
+            if (spinner) spinner.style.display = 'none';
+            if (icon) icon.style.display = 'inline-block'; // Show icon
+            if (textNode && submitClarificationButton.originalButtonText) {
                 textNode.textContent = submitClarificationButton.originalButtonText;
             } else if (textNode) {
-                 textNode.textContent = ' Get Clarification'; // Fallback
+                textNode.textContent = ' Get Clarification'; // Fallback
             }
         }
 
         function renderMathJax(container) {
-             if (!container || !window.MathJax || typeof window.MathJax.typesetPromise !== 'function') return;
-             setTimeout(() => { // Slight delay from original
-                 window.MathJax.typesetPromise([container]).catch(err => console.error('MathJax typesetting error:', err));
-             }, 50);
+            if (!container || !window.MathJax || typeof window.MathJax.typesetPromise !== 'function') return;
+            setTimeout(() => { // Slight delay from original
+                window.MathJax.typesetPromise([container]).catch(err => console.error('MathJax typesetting error:', err));
+            }, 50);
         }
         function clearSelectedFile() {
-            if(mathProblemText) mathProblemText.value = '';
+            if (mathProblemText) mathProblemText.value = '';
             if (mathProblemFile) mathProblemFile.value = '';
             if (selectedFileInfo) selectedFileInfo.innerHTML = '';
             lastUploadedFileWasImage = false;
@@ -1691,18 +882,18 @@ function simpleMarkdownToHtml(markdownText) {
         }
 
         function showRefresherLoading() {
-            if(refresherLoadingSpinner) refresherLoadingSpinner.style.display = 'flex';
-            if(refresherContent) refresherContent.style.display = 'none';
-            if(refresherError) refresherError.style.display = 'none';
-            if(refresherExample) refresherExample.innerHTML = '';
-            if(refresherSolvedQuestions) refresherSolvedQuestions.innerHTML = '';
-            if(refresherModalLabel) refresherModalLabel.innerHTML = `<i class="bi bi-book-fill me-2"></i>Quick Refresher: Loading...`;
+            if (refresherLoadingSpinner) refresherLoadingSpinner.style.display = 'flex';
+            if (refresherContent) refresherContent.style.display = 'none';
+            if (refresherError) refresherError.style.display = 'none';
+            if (refresherExample) refresherExample.innerHTML = '';
+            if (refresherSolvedQuestions) refresherSolvedQuestions.innerHTML = '';
+            if (refresherModalLabel) refresherModalLabel.innerHTML = `<i class="bi bi-book-fill me-2"></i>Quick Refresher: Loading...`;
             clearAlert(refresherError);
         }
-        function hideRefresherLoading() { if(refresherLoadingSpinner) refresherLoadingSpinner.style.display = 'none';}
+        function hideRefresherLoading() { if (refresherLoadingSpinner) refresherLoadingSpinner.style.display = 'none'; }
 
         if (mathProblemText) {
-            mathProblemText.addEventListener('input', function() {
+            mathProblemText.addEventListener('input', function () {
                 this.style.height = 'auto';
                 const scrollHeight = this.scrollHeight;
                 const maxHeight = 150;
@@ -1730,7 +921,7 @@ function simpleMarkdownToHtml(markdownText) {
                     }
                     if (file.type.startsWith('image/')) {
                         const reader = new FileReader();
-                        reader.onload = function(e) { lastUploadedImageSrc = e.target.result; lastUploadedFileWasImage = true; }
+                        reader.onload = function (e) { lastUploadedImageSrc = e.target.result; lastUploadedFileWasImage = true; }
                         reader.readAsDataURL(file);
                     } else { lastUploadedFileWasImage = false; lastUploadedImageSrc = ''; }
                 } else {
@@ -1741,7 +932,7 @@ function simpleMarkdownToHtml(markdownText) {
                 updateSolveButtonState();
             });
         }
-        
+
 
         if (solveUnifiedButton) {
             solveUnifiedButton.addEventListener('click', async () => {
@@ -1751,10 +942,10 @@ function simpleMarkdownToHtml(markdownText) {
                 else if (displayAllStepsRadio && displayAllStepsRadio.checked) selectedStepMode = 'all';
 
                 clearAlert();
-                if(practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
-                if(practiceOutput) practiceOutput.innerHTML = '<p class="text-muted">Click \'Generate\' after getting a solution.</p>';
-                if(conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
-                if(identifiedConceptsList) identifiedConceptsList.innerHTML = '';
+                if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
+                if (practiceOutput) practiceOutput.innerHTML = '<p class="text-muted">Click \'Generate\' after getting a solution.</p>';
+                if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
+                if (identifiedConceptsList) identifiedConceptsList.innerHTML = '';
                 clearAlert(conceptsRefresherAlert);
                 if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'none';
                 if (scaffoldingList) scaffoldingList.innerHTML = '';
@@ -1770,8 +961,8 @@ function simpleMarkdownToHtml(markdownText) {
                 if (isRecording && recognition) recognition.stop();
 
                 showButtonLoading(solveUnifiedButton, 'Solving...');
-                if(solutionOutput) solutionOutput.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="min-height: 150px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><span class="ms-2 text-muted">Processing...</span></div>`;
-                if(copySolutionButton) copySolutionButton.style.display = 'none';
+                if (solutionOutput) solutionOutput.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="min-height: 150px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><span class="ms-2 text-muted">Processing...</span></div>`;
+                if (copySolutionButton) copySolutionButton.style.display = 'none';
 
                 currentProblemText = ''; currentProblemFileURI = null; currentSolutionText = '';
                 currentSolutionStepsArray = []; currentStepIndex = 0;
@@ -1782,35 +973,35 @@ function simpleMarkdownToHtml(markdownText) {
                 const formData = new FormData();
                 if (problemTextValue) formData.append('problemText', problemTextValue);
                 if (file) formData.append('problemFile', file);
-                
+
                 try {
                     const response = await fetch(SOLVE_API_ENDPOINT, { method: 'POST', body: formData });
                     let responseData;
                     try { responseData = await response.json(); } catch (e) {
-                        if (!response.ok) { const txt = await response.text(); throw new Error(`Server error (${response.status}): ${txt.substring(0,200)}`); }
+                        if (!response.ok) { const txt = await response.text(); throw new Error(`Server error (${response.status}): ${txt.substring(0, 200)}`); }
                         throw new Error("Unexpected non-JSON response.");
                     }
 
                     if (!response.ok) {
                         if (responseData?.error) {
-                           if (solutionOutput) solutionOutput.innerHTML = `<p class="text-danger">${escapeHtml(responseData.error)}</p>`;
+                            if (solutionOutput) solutionOutput.innerHTML = `<p class="text-danger">${escapeHtml(responseData.error)}</p>`;
                         } else { throw new Error(responseData?.message || `HTTP error! Status: ${response.status}`); }
                         return; // Stop further processing on error
                     }
-                    
+
                     // Handle preemptive scaffolding even on success, if provided
                     if (responseData.preemptiveScaffolding?.length > 0) {
-                        if(scaffoldingList) scaffoldingList.innerHTML = responseData.preemptiveScaffolding.map(tip => `<li>${escapeHtml(tip)}</li>`).join('');
-                        if(preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'block';
+                        if (scaffoldingList) scaffoldingList.innerHTML = responseData.preemptiveScaffolding.map(tip => `<li>${escapeHtml(tip)}</li>`).join('');
+                        if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'block';
                         renderMathJax(preemptiveScaffoldingDiv);
                     } else {
-                        if(preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'none';
+                        if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'none';
                     }
 
 
                     if (responseData.solution) {
-                       displaySolution(responseData.solution, problemTextValue, responseData.identifiedConcepts, responseData.file_uri);
-                        if(mathProblemText) { mathProblemText.style.height = 'auto'; mathProblemText.dispatchEvent(new Event('input'));}
+                        displaySolution(responseData.solution, problemTextValue, responseData.identifiedConcepts, responseData.file_uri);
+                        if (mathProblemText) { mathProblemText.style.height = 'auto'; mathProblemText.dispatchEvent(new Event('input')); }
                         // Restore the previously selected radio button and render steps accordingly
                         if (selectedStepMode === 'one-by-one' && displayOneByOneRadio) {
                             displayOneByOneRadio.checked = true;
@@ -1821,16 +1012,16 @@ function simpleMarkdownToHtml(markdownText) {
                         }
                     } else {
                         // If no solution but there was preemptive scaffolding, don't throw error, just inform.
-                        if(solutionOutput) solutionOutput.innerHTML = '<p class="text-warning">Tips provided based on input. No full solution generated.</p>';
+                        if (solutionOutput) solutionOutput.innerHTML = '<p class="text-warning">Tips provided based on input. No full solution generated.</p>';
 
                     }
                 } catch (error) {
                     console.error('Error solving problem:', error);
                     showAlert(`Failed to get solution: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : escapeHtml(error.message)}`);
-                    if(solutionOutput) solutionOutput.innerHTML = '<p class="text-danger">Error processing request. Please try again.</p>';
-                    if(copySolutionButton) copySolutionButton.style.display = 'none';
-                    if(practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
-                    if(conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
+                    if (solutionOutput) solutionOutput.innerHTML = '<p class="text-danger">Error processing request. Please try again.</p>';
+                    if (copySolutionButton) copySolutionButton.style.display = 'none';
+                    if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
+                    if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
                     if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
                 } finally {
                     hideButtonLoading(solveUnifiedButton);
@@ -1881,12 +1072,12 @@ function simpleMarkdownToHtml(markdownText) {
                 if (isRecording) recognition.stop();
                 else { finalTranscript = ''; recognition.previousInterim = ''; recognition.start(); }
             });
-        } else { if(startSpeechButton) startSpeechButton.style.display = 'none'; }
+        } else { if (startSpeechButton) startSpeechButton.style.display = 'none'; }
 
         function updateSolveButtonState() {
             const problemTextValue = mathProblemText ? mathProblemText.value.trim() : '';
             const fileSelected = mathProblemFile ? mathProblemFile.files.length > 0 : false;
-            if(solveUnifiedButton) solveUnifiedButton.disabled = !(problemTextValue || fileSelected) || isRecording;
+            if (solveUnifiedButton) solveUnifiedButton.disabled = !(problemTextValue || fileSelected) || isRecording;
         }
 
         function renderDiagramFromData(diagramData) { // From original index.html (SVG rendering)
@@ -1912,7 +1103,7 @@ function simpleMarkdownToHtml(markdownText) {
             containerDiv.appendChild(svgElement);
             return containerDiv;
         }
-        
+
         function parseAndStoreSolutionSteps(solutionText) { // From original index.html
             currentSolutionStepsArray = [];
             if (!solutionText) return;
@@ -1962,17 +1153,17 @@ function simpleMarkdownToHtml(markdownText) {
                 if (nextStepButton) nextStepButton.style.display = 'none';
                 if (solutionOutput) solutionOutput.innerHTML = '<p class="text-muted">Solution steps will appear here...</p>';
                 const solutionCard = document.getElementById('solution-display-card');
-                if(solutionCard) solutionCard.style.display = 'block'; // Make card visible even if empty
+                if (solutionCard) solutionCard.style.display = 'block'; // Make card visible even if empty
                 return;
             }
             const solutionCard = document.getElementById('solution-display-card');
-            if(solutionCard) solutionCard.style.display = 'block'; // Make card visible
+            if (solutionCard) solutionCard.style.display = 'block'; // Make card visible
 
             if (mode === 'all' || (displayAllStepsRadio && displayAllStepsRadio.checked)) {
                 solutionOutput.innerHTML = currentSolutionStepsArray.join('');
                 if (nextStepButton) nextStepButton.style.display = 'none';
                 const endMsg = document.getElementById('endOfSolutionMessage');
-                if(endMsg) endMsg.style.display = 'none'; // Hide end message for 'all' mode
+                if (endMsg) endMsg.style.display = 'none'; // Hide end message for 'all' mode
             } else if (mode === 'one-by-one' || (displayOneByOneRadio && displayOneByOne.checked)) {
                 solutionOutput.innerHTML = currentSolutionStepsArray.slice(0, currentStepIndex + 1).join('');
                 const stepControlsDiv = document.getElementById('stepByStepControls');
@@ -1998,15 +1189,15 @@ function simpleMarkdownToHtml(markdownText) {
             lastIdentifiedConceptsString = identifiedConceptsString || 'Not identified.'; // Ensure default
 
             const solutionCard = document.getElementById('solution-display-card');
-            if(solutionCard) solutionCard.style.display = 'block'; // Make card visible
+            if (solutionCard) solutionCard.style.display = 'block'; // Make card visible
 
 
             if (lastUploadedFileWasImage && lastUploadedImageSrc) {
-                if(questionImageElement) questionImageElement.src = lastUploadedImageSrc;
-                if(uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'block';
+                if (questionImageElement) questionImageElement.src = lastUploadedImageSrc;
+                if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'block';
             } else {
-                if(uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
-                if(questionImageElement) questionImageElement.src = '#';
+                if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
+                if (questionImageElement) questionImageElement.src = '#';
             }
 
             parseAndStoreSolutionSteps(solutionText);
@@ -2014,19 +1205,19 @@ function simpleMarkdownToHtml(markdownText) {
 
             renderSolutionSteps(displayAllStepsRadio.checked ? 'all' : 'one-by-one');
 
-            if(copySolutionButton) copySolutionButton.style.display = 'block';
+            if (copySolutionButton) copySolutionButton.style.display = 'block';
 
             if (solutionText) {
-                if(practiceProblemsSectionCard) { practiceProblemsSectionCard.style.display = 'block'; practiceProblemsSectionCard.classList.add('fade-in'); }
-                if(conceptsRefresherSection) conceptsRefresherSection.style.display = 'block';
-                if(practiceOutput) practiceOutput.innerHTML = '<p class="text-muted">Click \'Generate\' for practice problems.</p>';
-                if(identifiedConceptsList) identifiedConceptsList.innerHTML = `<strong>Concepts:</strong> ${escapeHtml(lastIdentifiedConceptsString)}`;
+                if (practiceProblemsSectionCard) { practiceProblemsSectionCard.style.display = 'block'; practiceProblemsSectionCard.classList.add('fade-in'); }
+                if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'block';
+                if (practiceOutput) practiceOutput.innerHTML = '<p class="text-muted">Click \'Generate\' for practice problems.</p>';
+                if (identifiedConceptsList) identifiedConceptsList.innerHTML = `<strong>Concepts:</strong> ${escapeHtml(lastIdentifiedConceptsString)}`;
                 renderMathJax(practiceOutput); // Render if any default text has math
-                if(practiceLoading) practiceLoading.style.display = 'none';
+                if (practiceLoading) practiceLoading.style.display = 'none';
             } else {
-                if(practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
-                if(conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
-                if(solutionOutput) solutionOutput.innerHTML = '<p class="text-danger">No solution steps found.</p>';
+                if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
+                if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
+                if (solutionOutput) solutionOutput.innerHTML = '<p class="text-danger">No solution steps found.</p>';
             }
         }
 
@@ -2037,7 +1228,7 @@ function simpleMarkdownToHtml(markdownText) {
                 if (!lastIdentifiedConceptsString || lastIdentifiedConceptsString.trim() === '' || lastIdentifiedConceptsString.includes('Not identified.')) {
                     showAlert("No specific concepts identified for this problem.", "info", conceptsRefresherAlert); return;
                 }
-                if(refresherModalLabel) refresherModalLabel.innerHTML = `<i class="bi bi-book-fill me-2"></i>Quick Refresher for Key Concepts`;
+                if (refresherModalLabel) refresherModalLabel.innerHTML = `<i class="bi bi-book-fill me-2"></i>Quick Refresher for Key Concepts`;
                 showRefresherLoading(); refresherModal.show();
 
                 const payload = { concepts: lastIdentifiedConceptsString };
@@ -2048,44 +1239,44 @@ function simpleMarkdownToHtml(markdownText) {
                     let responseData;
                     try { responseData = await response.json(); } catch (e) {
                         const txt = await response.text();
-                        if (!response.ok) throw new Error(`Server error (${response.status}): ${txt.substring(0,200)}`);
+                        if (!response.ok) throw new Error(`Server error (${response.status}): ${txt.substring(0, 200)}`);
                         throw new Error("Received an unexpected non-JSON response from check server.");
                     }
                     if (!response.ok) throw new Error(responseData?.error || responseData?.message || `HTTP error! Status: ${response.status}`);
 
                     if (responseData.concept_name || responseData.concept_description || responseData.example || responseData.solved_questions?.length > 0) {
-                        if(refresherModalLabel && responseData.concept_name) refresherModalLabel.innerHTML = `<i class="bi bi-book-fill me-2"></i>Quick Refresher: ${escapeHtml(responseData.concept_name)}`;
-                        if(refresherConceptDescription) refresherConceptDescription.innerHTML = responseData.concept_description ? escapeHtml(responseData.concept_description) : '<p class="text-muted">Description not available.</p>';
-                        if(refresherExample) refresherExample.innerHTML = responseData.example ? escapeHtml(responseData.example) : '<p class="text-muted">Example not available.</p>';
+                        if (refresherModalLabel && responseData.concept_name) refresherModalLabel.innerHTML = `<i class="bi bi-book-fill me-2"></i>Quick Refresher: ${escapeHtml(responseData.concept_name)}`;
+                        if (refresherConceptDescription) refresherConceptDescription.innerHTML = responseData.concept_description ? escapeHtml(responseData.concept_description) : '<p class="text-muted">Description not available.</p>';
+                        if (refresherExample) refresherExample.innerHTML = responseData.example ? escapeHtml(responseData.example) : '<p class="text-muted">Example not available.</p>';
                         if (responseData.solved_questions?.length > 0) {
-                            if(refresherSolvedQuestions) refresherSolvedQuestions.innerHTML = responseData.solved_questions.map((q_obj, index) =>
-                                q_obj?.question && q_obj?.solution ? `<p><strong>Problem ${index + 1}:</strong> ${escapeHtml(q_obj.question)}</p><p><strong>Solution:</strong> ${escapeHtml(q_obj.solution)}</p>${index < responseData.solved_questions.length-1 ? '<hr style="margin: 15px 0;">':''}` : ''
+                            if (refresherSolvedQuestions) refresherSolvedQuestions.innerHTML = responseData.solved_questions.map((q_obj, index) =>
+                                q_obj?.question && q_obj?.solution ? `<p><strong>Problem ${index + 1}:</strong> ${escapeHtml(q_obj.question)}</p><p><strong>Solution:</strong> ${escapeHtml(q_obj.solution)}</p>${index < responseData.solved_questions.length - 1 ? '<hr style="margin: 15px 0;">' : ''}` : ''
                             ).join('');
-                        } else { if(refresherSolvedQuestions) refresherSolvedQuestions.innerHTML = '<p class="text-muted">Solved questions not available.</p>'; }
+                        } else { if (refresherSolvedQuestions) refresherSolvedQuestions.innerHTML = '<p class="text-muted">Solved questions not available.</p>'; }
                         renderMathJax(refresherConceptDescription); renderMathJax(refresherExample); renderMathJax(refresherSolvedQuestions);
-                        if(refresherContent) refresherContent.style.display = 'block'; if(refresherError) refresherError.style.display = 'none';
+                        if (refresherContent) refresherContent.style.display = 'block'; if (refresherError) refresherError.style.display = 'none';
                     } else {
-                        if(refresherContent) refresherContent.style.display = 'none'; if(refresherError) refresherError.style.display = 'block';
-                        if(refresherError) { refresherError.classList.remove('alert-danger'); refresherError.classList.add('alert-info'); refresherError.innerHTML = 'No specific refresher content found for these concepts.';}
+                        if (refresherContent) refresherContent.style.display = 'none'; if (refresherError) refresherError.style.display = 'block';
+                        if (refresherError) { refresherError.classList.remove('alert-danger'); refresherError.classList.add('alert-info'); refresherError.innerHTML = 'No specific refresher content found for these concepts.'; }
                     }
                 } catch (error) {
                     console.error('Error fetching refresher content:', error);
-                    if(refresherContent) refresherContent.style.display = 'none'; if(refresherError) refresherError.style.display = 'block';
-                    if(refresherError) { refresherError.classList.remove('alert-info'); refresherError.classList.add('alert-danger'); refresherError.innerHTML = `Failed to load refresher content: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : escapeHtml(error.message)}`;}
+                    if (refresherContent) refresherContent.style.display = 'none'; if (refresherError) refresherError.style.display = 'block';
+                    if (refresherError) { refresherError.classList.remove('alert-info'); refresherError.classList.add('alert-danger'); refresherError.innerHTML = `Failed to load refresher content: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : escapeHtml(error.message)}`; }
                 } finally {
                     hideRefresherLoading();
                 }
             });
         }
 
-        if(practiceSlider && practiceCount) practiceSlider.addEventListener('input', () => { practiceCount.textContent = practiceSlider.value; });
+        if (practiceSlider && practiceCount) practiceSlider.addEventListener('input', () => { practiceCount.textContent = practiceSlider.value; });
 
         if (generatePracticeButton) {
             generatePracticeButton.addEventListener('click', async () => {
                 clearAlert();
                 if (!currentSolutionText) { showAlert("Cannot generate practice: No problem context available.", "warning"); return; }
                 const numberOfProblems = parseInt(practiceSlider.value, 10);
-                if(practiceOutput) practiceOutput.innerHTML = ''; if(practiceLoading) practiceLoading.style.display = 'block';
+                if (practiceOutput) practiceOutput.innerHTML = ''; if (practiceLoading) practiceLoading.style.display = 'block';
                 showButtonLoading(generatePracticeButton, 'Generating...');
 
                 const payload = { contextText: currentSolutionText, numberOfProblems };
@@ -2108,20 +1299,20 @@ function simpleMarkdownToHtml(markdownText) {
                             problemDiv.innerHTML = `<span class="problem-number">${escapeHtml(match[1].trim())}</span> <span>${escapeHtml(match[2].trim())}</span>`;
                             tempDiv.appendChild(problemDiv);
                         }
-                        if(practiceOutput) while (tempDiv.firstChild) practiceOutput.appendChild(tempDiv.firstChild); // Append all at once
-                        
+                        if (practiceOutput) while (tempDiv.firstChild) practiceOutput.appendChild(tempDiv.firstChild); // Append all at once
+
                         if (!problemsFound && practiceOutput) {
                             const rawDiv = document.createElement('div'); rawDiv.classList.add('practice-problem'); rawDiv.textContent = responseData.practice_text;
                             practiceOutput.appendChild(rawDiv);
                         }
                         renderMathJax(practiceOutput);
-                    } else { if(practiceOutput) practiceOutput.innerHTML = '<p class="text-muted">No practice problems were generated.</p>'; }
+                    } else { if (practiceOutput) practiceOutput.innerHTML = '<p class="text-muted">No practice problems were generated.</p>'; }
                 } catch (error) {
                     console.error('Error generating practice problems:', error);
                     showAlert(`Failed to generate practice problems: ${error.message}`, 'danger');
-                    if(practiceOutput) practiceOutput.innerHTML = '<p class="text-danger">Could not load practice problems.</p>';
+                    if (practiceOutput) practiceOutput.innerHTML = '<p class="text-danger">Could not load practice problems.</p>';
                 } finally {
-                    if(practiceLoading) practiceLoading.style.display = 'none';
+                    if (practiceLoading) practiceLoading.style.display = 'none';
                     hideButtonLoading(generatePracticeButton);
                 }
             });
@@ -2133,13 +1324,13 @@ function simpleMarkdownToHtml(markdownText) {
                 if (practiceProblemDiv) {
                     const problemText = practiceProblemDiv.dataset.problemText;
                     if (!problemText) { showAlert("Could not load problem text.", "warning", practiceModalAlertBox); return; }
-                    if(modalPracticeProblemContent) modalPracticeProblemContent.textContent = problemText;
-                    if(modalPracticeProblemTextHidden) modalPracticeProblemTextHidden.value = problemText;
+                    if (modalPracticeProblemContent) modalPracticeProblemContent.textContent = problemText;
+                    if (modalPracticeProblemTextHidden) modalPracticeProblemTextHidden.value = problemText;
                     renderMathJax(modalPracticeProblemContent);
-                    if(practiceSolutionFile) practiceSolutionFile.value = '';
-                    if(practiceSelectedFileInfo) practiceSelectedFileInfo.textContent = '';
-                    if(practiceCheckResult) practiceCheckResult.style.display = 'none';
-                    if(practiceCheckOutput) practiceCheckOutput.innerHTML = '';
+                    if (practiceSolutionFile) practiceSolutionFile.value = '';
+                    if (practiceSelectedFileInfo) practiceSelectedFileInfo.textContent = '';
+                    if (practiceCheckResult) practiceCheckResult.style.display = 'none';
+                    if (practiceCheckOutput) practiceCheckOutput.innerHTML = '';
                     clearAlert(practiceModalAlertBox);
                     practiceCheckModal.show();
                 }
@@ -2157,7 +1348,7 @@ function simpleMarkdownToHtml(markdownText) {
                 if (solutionFile.size > maxSizeMB * 1024 * 1024) { showAlert(`File size exceeds ${maxSizeMB}MB.`, 'warning', practiceModalAlertBox); practiceSolutionFile.value = ''; practiceSelectedFileInfo.textContent = ''; return; }
 
                 showButtonLoading(submitPracticeCheckButton, 'Checking...'); // JS for this button needs to be adapted if it's not generic
-                if(practiceCheckResult) practiceCheckResult.style.display = 'none'; if(practiceCheckOutput) practiceCheckOutput.innerHTML = '';
+                if (practiceCheckResult) practiceCheckResult.style.display = 'none'; if (practiceCheckOutput) practiceCheckOutput.innerHTML = '';
                 const formData = new FormData();
                 formData.append('practiceProblem', practiceProblemText); formData.append('solutionFile', solutionFile);
 
@@ -2165,21 +1356,21 @@ function simpleMarkdownToHtml(markdownText) {
                     const response = await fetch(CHECK_API_ENDPOINT, { method: 'POST', body: formData });
                     let responseData;
                     try { responseData = await response.json(); } catch (e) {
-                        if (!response.ok) { const txt = await response.text(); throw new Error(`Server error (${response.status}): ${txt.substring(0,200)}`); }
+                        if (!response.ok) { const txt = await response.text(); throw new Error(`Server error (${response.status}): ${txt.substring(0, 200)}`); }
                         throw new Error("Received an unexpected non-JSON response from check server.");
                     }
                     if (!response.ok) throw new Error(responseData?.error || responseData?.message || `HTTP error! Status: ${response.status}`);
                     if (responseData.check_result) {
                         const htmlFeedback = simpleMarkdownToHtml(responseData.check_result);
-                        if(practiceCheckOutput) practiceCheckOutput.innerHTML = htmlFeedback;
-                        
+                        if (practiceCheckOutput) practiceCheckOutput.innerHTML = htmlFeedback;
+
                         renderMathJax(practiceCheckOutput); // Ensure MathJax processes the new content
-                        if(practiceCheckResult) practiceCheckResult.style.display = 'block';
+                        if (practiceCheckResult) practiceCheckResult.style.display = 'block';
                     } else { throw new Error("Feedback missing in server response."); }
                 } catch (error) {
                     console.error('Error checking practice solution:', error);
                     showAlert(`Failed to check solution: ${error.message.includes('Failed to fetch') ? 'Network error.' : escapeHtml(error.message)}`, 'danger', practiceModalAlertBox);
-                    if(practiceCheckResult) practiceCheckResult.style.display = 'none';
+                    if (practiceCheckResult) practiceCheckResult.style.display = 'none';
                 } finally {
                     hideButtonLoading(submitPracticeCheckButton); // JS for this button needs to be adapted
                 }
@@ -2193,7 +1384,7 @@ function simpleMarkdownToHtml(markdownText) {
                 } else { practiceSelectedFileInfo.innerHTML = ''; }
             });
         }
-        
+
         if (solutionOutput) {
             solutionOutput.addEventListener('click', (event) => {
                 const stepElement = event.target.closest('.interactive-step'); // Original class
@@ -2201,11 +1392,11 @@ function simpleMarkdownToHtml(markdownText) {
                     const stepNumber = stepElement.dataset.stepNumber;
                     const stepContentElement = stepElement.querySelector('.step-content');
                     const stepContentHTML = stepContentElement ? stepContentElement.innerHTML : '<p class="text-danger">Error: Could not extract step content.</p>';
-                    if(modalStepNumberInput) modalStepNumberInput.value = stepNumber;
-                    if(modalStepContent) modalStepContent.innerHTML = stepContentHTML;
-                    if(clarificationQuestion) clarificationQuestion.value = '';
-                    if(clarificationResult) clarificationResult.style.display = 'none';
-                    if(clarificationOutput) clarificationOutput.innerHTML = '';
+                    if (modalStepNumberInput) modalStepNumberInput.value = stepNumber;
+                    if (modalStepContent) modalStepContent.innerHTML = stepContentHTML;
+                    if (clarificationQuestion) clarificationQuestion.value = '';
+                    if (clarificationResult) clarificationResult.style.display = 'none';
+                    if (clarificationOutput) clarificationOutput.innerHTML = '';
                     clearAlert(modalAlertBox);
                     const modalTitle = clarifyStepModalElement?.querySelector('.modal-title');
                     if (modalTitle) modalTitle.innerHTML = `<i class="bi bi-chat-left-text-fill me-2"></i>Clarify Step ${stepNumber}`;
@@ -2223,7 +1414,7 @@ function simpleMarkdownToHtml(markdownText) {
                 if (!currentSolutionText || !stepNumber) { showAlert('Missing solution context. Please solve a problem first.', 'danger', modalAlertBox); return; }
 
                 showModalLoading(); // Uses original function
-                if(clarificationResult) clarificationResult.style.display = 'none'; if(clarificationOutput) clarificationOutput.innerHTML = '';
+                if (clarificationResult) clarificationResult.style.display = 'none'; if (clarificationOutput) clarificationOutput.innerHTML = '';
 
                 const payload = { originalProblemText: currentProblemText, originalProblemFileURI: currentProblemFileURI, fullSolution: currentSolutionText, stepNumber: parseInt(stepNumber, 10), userQuestion };
                 try {
@@ -2232,21 +1423,21 @@ function simpleMarkdownToHtml(markdownText) {
                     if (!response.ok) throw new Error(responseData?.error || responseData?.message || `HTTP error! Status: ${response.status}`);
                     if (responseData.clarification) {
                         const htmlClarification = simpleMarkdownToHtml(responseData.clarification);
-                        if(clarificationOutput) clarificationOutput.innerHTML = htmlClarification;
-                        
-                        if(clarificationResult) clarificationResult.style.display = 'block';
+                        if (clarificationOutput) clarificationOutput.innerHTML = htmlClarification;
+
+                        if (clarificationResult) clarificationResult.style.display = 'block';
                         renderMathJax(clarificationOutput); // Ensure MathJax processes the new content
                     } else { throw new Error("No clarification content received."); }
                 } catch (error) {
                     console.error('Error getting clarification:', error);
                     showAlert(`Failed to get clarification: ${error.message}`, 'danger', modalAlertBox);
-                    if(clarificationOutput) clarificationOutput.innerHTML = ''; if(clarificationResult) clarificationResult.style.display = 'none';
+                    if (clarificationOutput) clarificationOutput.innerHTML = ''; if (clarificationResult) clarificationResult.style.display = 'none';
                 } finally {
                     hideModalLoading(); // Uses original function
                 }
             });
         }
-        
+
         // Add this CSS for PDF export cleanup
         const style = document.createElement('style');
         style.innerHTML = `
@@ -2268,7 +1459,7 @@ function simpleMarkdownToHtml(markdownText) {
         if (copySolutionButton && solutionOutput) {
             copySolutionButton.innerHTML = '<i class="bi bi-file-earmark-pdf me-1"></i> Save as PDF';
             copySolutionButton.style.display = 'block';
-            copySolutionButton.onclick = async function() {
+            copySolutionButton.onclick = async function () {
                 const solutionCard = document.getElementById('solution-display-card');
                 if (!solutionCard) return;
                 // Hide the Save as PDF button
@@ -2279,7 +1470,7 @@ function simpleMarkdownToHtml(markdownText) {
                 solutionCard.style.fontFamily = window.getComputedStyle(document.body).fontFamily;
                 // Wait for MathJax to finish rendering (if present)
                 if (window.MathJax && typeof MathJax.typesetPromise === 'function') {
-                    try { await MathJax.typesetPromise([solutionCard]); } catch (e) {}
+                    try { await MathJax.typesetPromise([solutionCard]); } catch (e) { }
                 }
                 // Ensure all SVGs are visible
                 solutionCard.querySelectorAll('svg').forEach(svg => {
@@ -2288,26 +1479,26 @@ function simpleMarkdownToHtml(markdownText) {
                 });
                 // Export with html2pdf
                 html2pdf()
-                  .set({
-                    margin: 0,
-                    filename: 'solution.pdf',
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, backgroundColor: null, scrollY: 0 },
-                    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: 'avoid-all' }
-                  })
-                  .from(solutionCard)
-                  .save()
-                  .finally(() => {
-                    copySolutionButton.classList.remove('pdf-hide');
-                    solutionCard.classList.remove('pdf-export');
-                    solutionCard.style.fontFamily = '';
-                });
+                    .set({
+                        margin: 0,
+                        filename: 'solution.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: { scale: 2, useCORS: true, backgroundColor: null, scrollY: 0 },
+                        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                        pagebreak: { mode: 'avoid-all' }
+                    })
+                    .from(solutionCard)
+                    .save()
+                    .finally(() => {
+                        copySolutionButton.classList.remove('pdf-hide');
+                        solutionCard.classList.remove('pdf-export');
+                        solutionCard.style.fontFamily = '';
+                    });
             };
         }
 
         function renderChatHistory() { // Original logic, dashboard styles apply
-            if(!chatWindow) return;
+            if (!chatWindow) return;
             chatWindow.innerHTML = '';
             if (conversationHistory.length === 0) {
                 chatWindow.innerHTML = `<div class="sample-question-container"><h4><i class="bi bi-brain me-2"></i>Ask Professor Owl Anything About Math Theory!</h4><p class="text-muted">Examples:</p><div class="sample-question-chips"><div class="sample-question-chip" onclick="fillSampleQuestion('Who was Pythagoras?')">Who was Pythagoras?</div><div class="sample-question-chip" onclick="fillSampleQuestion('Explain complex numbers')">Explain complex numbers</div><div class="sample-question-chip" onclick="fillSampleQuestion('What is the origin of the equals sign?')">Origin of equals sign?</div> <div class="sample-question-chip" onclick="fillSampleQuestion('Tell me about Euclid\\\'s Elements')">Euclid's Elements?</div></div></div>`;
@@ -2323,10 +1514,10 @@ function simpleMarkdownToHtml(markdownText) {
             }
             chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
         }
-        function fillSampleQuestion(q) { if(amaInput) {amaInput.value = q; amaInput.focus();} }
+        function fillSampleQuestion(q) { if (amaInput) { amaInput.value = q; amaInput.focus(); } }
 
         async function sendQuestion() { // Original logic, uses `sendButton` ID
-            if(!amaInput || !sendButton || !chatWindow) return;
+            if (!amaInput || !sendButton || !chatWindow) return;
             const question = amaInput.value.trim();
             if (!question) return;
             conversationHistory.push({ role: 'user', content: question });
@@ -2336,7 +1527,7 @@ function simpleMarkdownToHtml(markdownText) {
             const typingIndicator = document.createElement('div'); typingIndicator.id = 'typing';
             typingIndicator.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Owl Avatar"><div><span id="typing-text">Professor Owl is thinking</span><span id="dots">.</span></div>`;
             chatWindow.appendChild(typingIndicator); chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' });
-            let dotsCount = 1; const typingInterval = setInterval(() => { dotsCount = (dotsCount % 3) + 1; const d = document.getElementById('dots'); if(d) d.innerText = '.'.repeat(dotsCount);}, 400);
+            let dotsCount = 1; const typingInterval = setInterval(() => { dotsCount = (dotsCount % 3) + 1; const d = document.getElementById('dots'); if (d) d.innerText = '.'.repeat(dotsCount); }, 400);
 
             try {
                 const response = await fetch(AMA_API_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ history: conversationHistory }) });
@@ -2347,12 +1538,12 @@ function simpleMarkdownToHtml(markdownText) {
                 console.error("Error in AMA chat:", error);
                 conversationHistory.push({ role: 'bot', content: `🚫 Error contacting the server! Please check your connection or try again.` });
             } finally {
-                clearInterval(typingInterval); const ti = document.getElementById('typing'); if(ti) ti.remove();
+                clearInterval(typingInterval); const ti = document.getElementById('typing'); if (ti) ti.remove();
                 renderChatHistory(); hideButtonLoading(sendButton); // Use generic helper
             }
         }
-        if(amaInput) amaInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendQuestion(); }});
-        if(sendButton) sendButton.addEventListener('click', sendQuestion);
+        if (amaInput) amaInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendQuestion(); } });
+        if (sendButton) sendButton.addEventListener('click', sendQuestion);
 
         document.addEventListener('DOMContentLoaded', () => {
             if (displayAllStepsRadio) {
@@ -2374,8 +1565,8 @@ function simpleMarkdownToHtml(markdownText) {
                 });
             }
 
-            if(mathProblemText) setTimeout(() => mathProblemText.dispatchEvent(new Event('input')), 100);
-            if(practiceSlider && practiceCount) practiceCount.textContent = practiceSlider.value;
+            if (mathProblemText) setTimeout(() => mathProblemText.dispatchEvent(new Event('input')), 100);
+            if (practiceSlider && practiceCount) practiceCount.textContent = practiceSlider.value;
             renderChatHistory();
             document.querySelectorAll('section, header, footer').forEach(el => el.classList.add('fade-in'));
             if (practiceLoading) practiceLoading.style.display = 'none';
@@ -2383,23 +1574,24 @@ function simpleMarkdownToHtml(markdownText) {
             if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
             if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
             const solutionCard = document.getElementById('solution-display-card');
-            if(solutionCard) solutionCard.style.display = 'none';
+            if (solutionCard) solutionCard.style.display = 'none';
             if (solutionOutput) solutionOutput.innerHTML = '<p class="text-muted">Your step-by-step solution will appear here...</p>';
             if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
             if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'none';
 
 
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                 anchor.addEventListener('click', function (e) {
-                     e.preventDefault();
-                     const targetElement = document.querySelector(this.getAttribute('href'));
-                     if (targetElement) {
-                         targetElement.scrollIntoView({ behavior: 'smooth' });
-                     }
-                 });
-             });
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetElement = document.querySelector(this.getAttribute('href'));
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
         });
     </script>
 
 </body>
+
 </html>
