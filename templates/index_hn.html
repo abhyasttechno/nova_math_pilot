@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Using dashboard.html's title -->
-    <title>Nova Maths - Your AI Math Buddy</title>
+    <title>नोवा मैथ्स – आपका कृत्रिम बुद्धिमत्ता गणित मित्र</title>
 
     <!-- Bootstrap CSS (from dashboard.html) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -38,7 +38,6 @@
         src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
         </script>
 
-    <!-- Custom CSS: Content of style-p.css embedded here, plus necessary overrides/additions from index.html -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -57,18 +56,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
-                    <li class="nav-item"><a class="nav-link active" href="#solver-section-anchor">सॉल्वर</a></li>
                     <li class="nav-item"><a class="nav-link" href="#professor-owl-anchor">प्रोफेसर उल्लू</a></li>
                     <li class="nav-item"><a class="nav-link" href="#feedback-anchor">प्रतिक्रिया</a></li>
-                    <!-- Display Logged-in Username -->
-                    {% if user_name %}
-                    <li class="nav-item d-flex align-items-center ms-lg-2 mt-2 mt-lg-0">
-                        <span class="nav-link active">{{ user_name }}</span>
-                    </li>
-                    {% endif %}
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <a class="nav-link btn btn-outline-primary" href="/logout">Logout </a>
-                    </li>
+
                 </ul>
             </div>
         </div>
@@ -86,6 +76,7 @@
         </div>
     </header>
 
+
     <!-- Main Content Area (structure from dashboard.html, content from index.html) -->
     <main class="container nm-container mt-4 mb-5">
         <div id="solver-section-anchor"></div> <!-- Anchor for navigation -->
@@ -100,7 +91,7 @@
                             <!-- Unified Input Bar (from original index.html) -->
                             <div class="unified-input-bar">
                                 <textarea class="form-control" id="mathProblemText" rows="1"
-                                    placeholder="अपनी गणित की समस्या टाइप करें, बोलें, या फ़ाइल संलग्न करें।"
+                                    placeholder="अपनी गणित की समस्या टाइप करें, बोलें, या फ़ाइल संलग्न करें..."
                                     style="overflow-y: hidden;"></textarea>
                                 <button type="button" id="startSpeechButton" class="btn btn-icon rounded-circle"
                                     aria-label="Start voice input" title="Speak your math problem">
@@ -125,7 +116,7 @@
                                     class="btn d-flex align-items-center justify-content-center px-3"
                                     aria-label="Solve problem" title="Solve Problem">
                                     <span class="spinner-border spinner-border-sm loading-spinner me-2" role="status"
-                                        aria-hidden="true"></span>
+                                        aria-hidden="true"></span> <!-- Spinner hidden by CSS initially -->
                                     <span class="button-text-content">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                             fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
@@ -163,11 +154,16 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10 col-xl-9">
                     <div id="alertBox" class="mb-3"></div> <!-- For status messages -->
+
+                    <!-- Preemptive Scaffolding (from original index.html) -->
                     <div id="preemptiveScaffolding" class="alert alert-warning fade-in"
                         style="display: none; margin-bottom: 1rem;">
-                        <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>संभावित ख़तरे:</strong>
+                        <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Potential Pitfalls:</strong>
                         <ul id="scaffoldingList" class="mb-0 ps-3 mt-2"></ul>
                     </div>
+
+                    <!-- Uploaded Question Image Preview (from original index.html) -->
+                    <!-- Uploaded Question Image Preview (from original index.html) -->
                     <div id="uploadedQuestionImagePreviewArea" class="mt-3" style="display: none;">
                         <div class="nm-card mb-4"> <!-- Card will take full width of parent column -->
                             <div class="card-header">
@@ -184,14 +180,15 @@
                             <span><i class="bi bi-card-list me-2"></i>चरण-दर-चरण समाधान</span>
                             <!-- Wrapper for button and new badge -->
                             <div class="d-flex flex-column align-items-end">
+
                                 <!-- NEW AI Solution Badge Element -->
                                 <span id="aiSolutionBadge" class="badge"
-                                    style="display: none; font-size: 0.8em; padding: 4px 10px; border-radius: 15px; font-weight: 500; background-color: rgba(45, 140, 255, 0.1); color: var(--nm-primary-blue);">AI
+                                    style="display: none; font-size: 0.8em; padding: 4px 10px; border-radius: 15px; font-weight: 500; background-color: rgba(45, 140, 255, 0.1); color: var(--nm-primary-blue);">एआई
                                     समाधान</span>
                             </div>
                         </div>
                         <div class="card-body" id="solutionOutput"> <!-- solutionOutput ID from index.html -->
-                            <p class="text-muted">आपका चरण-दर-चरण समाधान यहां प्रदर्शित होगा...</p>
+                            <p class="text-muted">आपका चरण-दर-चरण समाधान यहाँ दिखाई देगा...</p>
                         </div>
                         <!-- Step-by-Step Controls (from dashboard.html, button ID from index.html) -->
                         <div class="text-center mt-3 p-3 border-top" id="stepByStepControls" style="display: none;">
@@ -199,15 +196,15 @@
                                 <!-- ID from index.html -->
                                 अगला चरण <i class="bi bi-arrow-right"></i>
                             </button>
-                            <p id="endOfSolutionMessage" class="text-muted mt-2" style="display: none;">समाधान समाप्त.
-                            </p>
+                            <p id="endOfSolutionMessage" class="text-muted mt-2" style="display: none;">समाधान समाप्त
+                                हुआ।</p>
                         </div>
                     </div>
 
                     <!-- Identified Concepts & Refresher Card (dashboard.html structure, content from index.html) -->
                     <div id="concepts-refresher-card" class="nm-card mb-4" style="display: none;">
                         <div class="card-header">
-                            <i class="bi bi-lightbulb-fill me-2"></i>पहचाना गया अवधारणा
+                            <i class="bi bi-lightbulb-fill me-2"></i>पहचाना गया सिद्धांत
                         </div>
                         <div class="card-body">
                             <div id="identifiedConceptsList" class="mb-3"></div> <!-- ID from index.html -->
@@ -215,8 +212,8 @@
                                 <!-- ID from index.html -->
                                 <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
                                     aria-hidden="true"></span>
-                                <span class="button-text-content"><i class="bi bi-book-half me-1"></i>संक्षिप्त याद
-                                    दिलाना</span>
+                                <span class="button-text-content"><i class="bi bi-book-half me-1"></i>त्वरित
+                                    पुनरावलोकन</span>
                             </button>
                             <div id="conceptsRefresherAlert" class="mt-3"></div> <!-- ID from index.html -->
                         </div>
@@ -225,7 +222,7 @@
                     <!-- Practice Problems Card (dashboard.html structure, content from index.html) -->
                     <div id="practice-problems-card" class="nm-card" style="display: none;">
                         <div class="card-header">
-                            <i class="bi bi-pencil-square me-2"></i>अभ्यास प्रश्न तैयार करें
+                            <i class="bi bi-pencil-square me-2"></i>अभ्यास प्रश्न उत्पन्न करें
                         </div>
                         <div class="card-body">
                             <div id="practice-controls" class="mb-3"> <!-- ID from index.html -->
@@ -239,18 +236,18 @@
                                     <!-- ID from index.html -->
                                     <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
                                         aria-hidden="true"></span>
-                                    <span class="button-text-content"><i
-                                            class="bi bi-plus-circle-fill me-1"></i>बनाएं</span>
+                                    <span class="button-text-content"><i class="bi bi-plus-circle-fill me-1"></i>उत्पन्न
+                                        करें</span>
                                 </button>
                             </div>
                             <div id="practice-loading" class="text-center" style="display: none;">
                                 <!-- ID from index.html -->
                                 <div class="spinner-border" role="status"><span class="visually-hidden">लोड हो रहा
                                         है...</span></div>
-                                <p class="mt-2 text-muted">अभ्यास प्रश्न बनाए जा रहे हैं...</p>
+                                <p class="mt-2 text-muted">अभ्यास प्रश्न उत्पन्न किए जा रहे हैं....</p>
                             </div>
                             <div id="practice-problems-output"> <!-- ID from index.html -->
-                                <p class="text-muted">समाधान मिलने के बाद 'बनाएं' पर क्लिक करें।</p>
+                                <p class="text-muted">समाधान प्राप्त करने के बाद 'उत्पन्न करें' पर क्लिक करें</p>
                             </div>
                         </div>
                     </div>
@@ -263,7 +260,6 @@
 
 
 
-        <!-- Professor Owl Section (dashboard.html structure, content from index.html) -->
         <div id="professor-owl-anchor" class="pt-5"></div>
         <section id="ama-chatbot-section" class="mt-5"> <!-- ID from dashboard.html -->
             <h2 class="section-title"><i class="bi bi-chat-quote-fill me-2"></i>प्रोफेसर उल्लू – मुझसे कुछ भी पूछें!
@@ -316,15 +312,15 @@
                                     <input type="radio" id="star1" name="rating" value="1" required /><label for="star1"
                                         title="1 star"><i class="bi bi-star-fill"></i></label>
                                 </div>
-                                <div class="invalid-feedback text-center" id="ratingError" style="display: none;">कृपया
-                                    एक स्टार रेटिंग चुनें</div> <!-- ID from index.html -->
+                                <div class="invalid-feedback text-center" id="ratingError" style="display: none;">Please
+                                    एक स्टार रेटिंग चुनें।</div> <!-- ID from index.html -->
                             </div>
                             <div class="mb-3">
                                 <label for="feedbackEmail" class="form-label">आपका ईमेल पता<span
                                         class="text-danger">*</span></label>
                                 <input type="email" class="form-control" id="feedbackEmail" required
                                     placeholder="name@example.com"> <!-- ID from index.html -->
-                                <div class="invalid-feedback">कृपया सही ईमेल एड्रेस दें</div>
+                                <div class="invalid-feedback">Please provide a valid email address.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="feedbackText" class="form-label">विस्तृत प्रतिक्रिया (वैकल्पिक)</label>
@@ -349,30 +345,47 @@
     </main>
 
     <!-- Footer (from dashboard.html) -->
+    <!-- Footer (from dashboard.html) -->
     <footer class="footer mt-auto py-5">
         <div class="container nm-container">
             <div class="row">
                 <div class="col-lg-4 mb-4 mb-lg-0">
                     <h5>नोवा मैथ्स</h5>
-                    <p class="text-muted small">छात्रों को एआई-संचालित गणित सहायता के माध्यम से सशक्त बनाना</p>
+                    <p class="text-muted small">छात्रों को एआई-संचालित गणित सहायता से सशक्त बनाना।</p>
                 </div>
                 <div class="col-lg-2 col-md-3 col-6 mb-3">
-                    <h5>ऑनलाइन मंच</h5>
+                    <h5>प्लैटफ़ॉर्म</h5>
                     <ul class="list-unstyled">
-                        <li class="nav-item"><a class="nav-link active" href="#solver-section-anchor">सॉल्वर</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#professor-owl-anchor">प्रोफेसर उल्लू</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#feedback-anchor">प्रतिक्रिया</a></li>
+                        <li><a href="#solver-section-anchor">सॉल्वर</a></li>
+                        <li><a href="#features-section-anchor">विशेषताएं</a></li>
+                        <li><a href="#concepts-library-anchor">सिद्धांत</a></li>
+                        <li><a href="#professor-owl-anchor">प्रोफेसर उल्लू</a></li>
+                        <li><a href="#feedback-anchor">प्रतिक्रिया</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3 col-6 mb-3">
+                    <h5>स्कूल पोर्टल</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">लॉगिन</a></li>
+                        <li><a href="#">साइन अप</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3 mb-3">
+                    <h5>सहायता</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">संपर्क करें</a></li>
+                        <li><a href="#">सामान्य प्रश्न</a></li>
                     </ul>
                 </div>
             </div>
             <hr class="my-4">
             <div class="text-center text-muted small">
-                <p>&copy; 2024 नोवा मैथ्स. सभी अधिकार सुरक्षित हैं।</p>
-                <p>अस्वीकरण: एआई द्वारा उत्पन्न समाधान केवल मार्गदर्शन के लिए हैं। महत्वपूर्ण परिणामों को हमेशा सत्यापित
-                    करें।</p>
+                <p>&copy; 2024 नोवा मैथ्स। सर्वाधिकार सुरक्षित।</p>
+                <p>अस्वीकरण: एआई-जनित समाधान केवल मार्गदर्शन के लिए हैं। महत्वपूर्ण परिणामों को हमेशा सत्यापित करें।</p>
             </div>
         </div>
     </footer>
+
 
     <!-- Modals (Structure from original index.html, styled by dashboard.html theme with icons) -->
     <div class="modal fade" id="clarifyStepModal" tabindex="-1" aria-labelledby="clarifyStepModalLabel"
@@ -380,21 +393,21 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="clarifyStepModalLabel"><i
-                            class="bi bi-chat-left-text-fill me-2"></i>स्टेप को समझाएं</h5>
+                    <h5 class="modal-title" id="clarifyStepModalLabel"><i class="bi bi-chat-left-text-fill me-2"></i>चरण
+                        स्पष्ट करें</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <h6>मूल स्टेप का विवरण:</h6>
+                    <h6>मूल चरण सामग्री:</h6>
                     <div id="modalStepContent" class="mb-3 p-3 bg-light border rounded"
                         style="max-height: 200px; overflow-y: auto;"></div>
                     <form id="clarificationForm">
                         <input type="hidden" id="modalStepNumber">
                         <div class="mb-3">
-                            <label for="clarificationQuestion" class="form-label">इस चरण के बारे में और विवरण
+                            <label for="clarificationQuestion" class="form-label">इस चरण के बारे में अधिक विवरण
                                 पूछें:</label>
                             <textarea class="form-control" id="clarificationQuestion" rows="3"
-                                placeholder="जैसे, यह फ़ॉर्मूला क्यों इस्तेमाल किया गया?"></textarea>
+                                placeholder="उदाहरण: यह सूत्र क्यों उपयोग किया गया?"></textarea>
                         </div>
                         <div id="modalAlertBox" class="mb-3"></div>
                         <div id="clarificationResult" class="mt-3" style="display: none;">
@@ -407,11 +420,10 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">बंद करें</button>
                     <button type="submit" form="clarificationForm" id="submitClarificationButton" class="btn">
-                        <!-- JS applies specific classes -->
                         <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
                             aria-hidden="true"></span>
-                        <i class="bi bi-check-circle-fill button-icon me-1"></i> <!-- Icon from dashboard.html -->
-                        और समझें
+                        <i class="bi bi-check-circle-fill button-icon me-1"></i>
+                        स्पष्टीकरण प्राप्त करें
                     </button>
                 </div>
             </div>
@@ -424,7 +436,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="practiceCheckModalLabel"><i class="bi bi-check2-square me-2"></i>अपने
-                        अभ्यास का हल जांचें</h5>
+                        अभ्यास समाधान की जांच करें</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -434,8 +446,8 @@
                     <form id="practiceCheckForm">
                         <input type="hidden" id="modalPracticeProblemTextHidden">
                         <div class="mb-3">
-                            <label for="practiceSolutionFile" class="form-label">अपना हल अपलोड करें
-                                (इमेज/पीडीएफ):</label>
+                            <label for="practiceSolutionFile" class="form-label">अपना समाधान अपलोड करें
+                                (चित्र/पीडीएफ):</label>
                             <input class="form-control" type="file" id="practiceSolutionFile"
                                 accept="image/*,application/pdf" required>
                             <div id="practiceSelectedFileInfo" class="form-text mt-1"></div>
@@ -451,11 +463,10 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">बंद करें</button>
                     <button type="submit" form="practiceCheckForm" id="submitPracticeCheckButton" class="btn">
-                        <!-- JS applies specific classes -->
                         <span class="spinner-border spinner-border-sm me-1 loading-spinner" role="status"
                             aria-hidden="true"></span>
-                        <i class="bi bi-check-lg button-icon me-1"></i> <!-- Icon from dashboard.html -->
-                        हल जांचें
+                        <i class="bi bi-check-lg button-icon me-1"></i>
+                        समाधान जांचें
                     </button>
                 </div>
             </div>
@@ -463,34 +474,34 @@
     </div>
 
     <div class="modal fade" id="refresherModal" tabindex="-1" aria-labelledby="refresherModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl"> <!-- modal-xl from dashboard.html -->
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="refresherModalLabel"><i class="bi bi-book-fill me-2"></i>संक्षिप्त झलक:
-                        [अवधारणा का नाम]</h5>
+                    <h5 class="modal-title" id="refresherModalLabel"><i class="bi bi-book-fill me-2"></i>त्वरित
+                        पुनरावलोकन: [सिद्धांत नाम]</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="refresherLoadingSpinner" class="loading-spinner-modal" style="display: none;">
                         <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;"></div>
-                        <span class="ms-3 text-muted fs-5">रिफ्रेशर सामग्री लोड हो रही है...</span>
+                        <span class="ms-3 text-muted fs-5">पुनरावलोकन सामग्री लोड हो रही है...</span>
                     </div>
                     <div id="refresherContent" style="display: none;">
-                        <h6><i class="bi bi-card-text me-2"></i>अवधारणा का विवरण:</h6>
+                        <h6><i class="bi bi-card-text me-2"></i>सिद्धांत विवरण:</h6>
                         <div id="refresherConceptDescription"
                             class="refresher-content-area mb-4 p-3 bg-light border rounded"></div>
                         <h6><i class="bi bi-lightbulb me-2"></i>उदाहरण:</h6>
                         <div id="refresherExample" class="refresher-content-area mb-4 p-3 bg-light border rounded">
                         </div>
-                        <h6><i class="bi bi-patch-check-fill me-2"></i>सुलझाए गए सवाल:</h6>
+                        <h6><i class="bi bi-patch-check-fill me-2"></i>हल किए गए प्रश्न:</h6>
                         <div id="refresherSolvedQuestions" class="refresher-content-area p-3 bg-light border rounded">
                         </div>
                     </div>
-                    <div id="refresherError" class="alert alert-danger" style="display: none;"></div>
+                    <div id="refresherError" class="alert alert-danger" style="display: none;">त्रुटि: सामग्री लोड नहीं
+                        हो सकी।</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">ठीक है!</button>
-                    <!-- dashboard.html style button -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">समझ गया!</button>
                 </div>
             </div>
         </div>
@@ -500,7 +511,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Custom JavaScript (from original index.html, with MINOR class name updates for styling) -->
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script_hn.js') }}"></script>
 
 </body>
 

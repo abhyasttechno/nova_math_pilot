@@ -1,13 +1,3 @@
-// Add Practice Check Modal elements (Check these carefully)
-const hintsSection = document.getElementById('hints-section');
-const hintMessage = document.getElementById('hint-message');
-const currentHintOutput = document.getElementById('current-hint-output');
-const iSolvedItButton = document.getElementById('i-solved-it-button'); // Using button for confirmation
-const hintConfirmationDropdownElement = document.getElementById('hintConfirmationDropdown');// Uncomment if using dropdown
-const nextHintButton = document.getElementById('next-hint-button');
-
-
-
 const practiceCheckModalElement = document.getElementById('practiceCheckModal');
 const practiceCheckModal = new bootstrap.Modal(practiceCheckModalElement); // Initialize Bootstrap Modal instance
 const modalPracticeProblemContent = document.getElementById('modalPracticeProblemContent');
@@ -38,8 +28,7 @@ const refresherLoadingSpinner = document.getElementById('refresherLoadingSpinner
 const refresherError = document.getElementById('refresherError');
 
 // --- API Endpoints ---
-// const API_BASE_URL = 'https://novamaths-api-edfd27612b5d.herokuapp.com';
-const API_BASE_URL = 'http://127.0.0.1:8080';
+const API_BASE_URL = '/hn-api';
 const SOLVE_API_ENDPOINT = `${API_BASE_URL}/solve-math`;
 const CLARIFY_API_ENDPOINT = `${API_BASE_URL}/clarify-step`;
 const PRACTICE_API_ENDPOINT = `${API_BASE_URL}/practice`;
@@ -112,49 +101,10 @@ let currentStepIndex = 0; // For index.html's step logic
 let lastUploadedFileWasImage = false;
 let lastUploadedImageSrc = '';
 
-// NEW Global Variables for Hints
-let receivedHints = [];
-let currentHintIndex = 0;
-
 // --- Helper Functions (from original index.html) ---
 const startSpeechButton = document.getElementById('startSpeechButton');
 let isRecording = false;
 let recognition = null;
-
-// Function to display a specific hint (NEW)
-function displayHint(index) {
-    if (!hintsSection || !currentHintOutput || !hintMessage || !receivedHints || receivedHints.length === 0 || index < 0 || index >= receivedHints.length) {
-        console.warn("Cannot display hint:", index, receivedHints);
-        revealSolution(); // Fallback to solution if hints state is invalid
-        return;
-    }
-
-    currentHintIndex = index;
-    const hintText = receivedHints[currentHintIndex];
-
-    currentHintOutput.innerHTML = simpleMarkdownToHtml(hintText);
-    hintMessage.textContent = `Hint ${currentHintIndex + 1} of ${receivedHints.length}`;
-
-    // Based on the screenshot and your intended flow, the dropdown handles progression.
-    // So, hide the separate 'Next Hint' button when hints are active.
-    if (nextHintButton) {
-         nextHintButton.style.display = 'none';
-    }
-
-     // Ensure I Solved It button is visible
-     if (iSolvedItButton) iSolvedItButton.style.display = 'inline-block'; // Or 'block' depending on layout needs
-
-     // Ensure dropdown is visible (Assuming the dropdown is the intended way to progress)
-     // The parentElement is needed because the dropdown structure usually has the button inside a container div.
-     const dropdownContainer = hintConfirmationDropdownElement ? hintConfirmationDropdownElement.parentElement : null;
-     if (dropdownContainer) {
-         dropdownContainer.style.display = 'inline-flex'; // Use inline-flex or block depending on desired layout
-     }
-
-
-    renderMathJax(currentHintOutput);
-    hintsSection.style.display = 'block'; // Ensure hint section is visible
-}
 
 
 function simpleMarkdownToHtml(markdownText) {
@@ -164,7 +114,8 @@ function simpleMarkdownToHtml(markdownText) {
 
     // --- Block level elements ---
 
-    // Headings (must be before paragraphs/newlines)
+    // Headings ( musí být před paragrafy/newlines)
+    // Process from smaller heading to larger if simple replace, or ensure regex matches start of line
     html = html.replace(/^#### (.*$)/gim, '<h6>$1</h6>');
     html = html.replace(/^### (.*$)/gim, '<h5>$1</h5>');
     html = html.replace(/^## (.*$)/gim, '<h4>$1</h4>');
@@ -173,12 +124,32 @@ function simpleMarkdownToHtml(markdownText) {
     // Horizontal Rules (---, ***, ___)
     html = html.replace(/^\s*([-*_]){3,}\s*$/gm, '<hr>');
 
+    // Lists (simplified handling for non-nested lists)
+    // Unordered lists
+    html = html.replace(/^\s*[\*\-\+]\s+(.*)/gm, '<li>$1</li>'); // Convert items to <li>
+    html = html.replace(/(<li>.*<\/li>\s*)+/g, '<ul>$&</ul>');    // Wrap groups of <li> in <ul>
+
+    // Numbered lists
+    html = html.replace(/^\s*\d+\.\s+(.*)/gm, '<li>$1</li>');    // Convert items to <li>
+    html = html.replace(/(<li>.*<\/li>\s*)+/g, '<ol>$&</ol>');     // Wrap groups of <li> in <ol>
+
+    // Fix for lists: if <ul> or <ol> was accidentally wrapped in another, clean it up
+    html = html.replace(/<ul>\s*<ol>/gi, '<ol>');
+    html = html.replace(/<\/ol>\s*<\/ul>/gi, '</ol>');
+    html = html.replace(/<ol>\s*<ul>/gi, '<ul>');
+    html = html.replace(/<\/ul>\s*<\/ol>/gi, '</ul>');
+
+
+    // --- Inline elements (applied after block elements for content within them) ---
+    // Must be applied to the content of list items too if not handled by list regex
+
     // Helper to apply inline markdown to content that is not already inside HTML tags
     const applyInlineToTextNodes = (text) => {
         let processed = text;
         // Bold (**text** or __text__)
         processed = processed.replace(/\*\*(.*?)\*\*|__(.*?)__/g, (match, p1, p2) => `<strong>${p1 || p2}</strong>`);
-        // Italic (*text* or _text_)
+        // Italic (*text* or _text_) - Be careful with single * due to lists
+        // Using _text_ is safer. For *text*, make sure it's not a list item start.
         processed = processed.replace(/(?<!\*)\*([^* \n][^*]*?[^* \n])\*(?!\*)|_(.+?)_/g, (match, p1, p2) => `<em>${p1 || p2 || ''}</em>`);
         // Strikethrough (~~text~~)
         processed = processed.replace(/\~\~(.*?)\~\~/g, '<del>$1</del>');
@@ -187,74 +158,78 @@ function simpleMarkdownToHtml(markdownText) {
         return processed;
     };
 
-    // Process lists line by line, applying inline formatting to list item content
+    // Apply inline markdown to text not already in tags (e.g. inside <li> which was just text)
+    // This is a bit complex to do perfectly with regex. A full parser is better.
+    // For now, let's apply it broadly and clean up after.
+    // The list regex above already extracts the item text. We should apply inline there.
+    // Let's refine the list processing slightly to include inline processing
+
+    // Re-do list processing with inline included
+    html = markdownText; // Reset html to original for this pass
+    html = html.replace(/^#### (.*$)/gim, '<h6>$1</h6>');
+    html = html.replace(/^### (.*$)/gim, '<h5>$1</h5>');
+    html = html.replace(/^## (.*$)/gim, '<h4>$1</h4>');
+    html = html.replace(/^# (.*$)/gim, '<h3>$1</h3>');
+    html = html.replace(/^\s*([-*_]){3,}\s*$/gm, '<hr>');
+
     let listProcessedHtml = "";
     let inListType = null; // 'ul' or 'ol'
-    const lines = html.split('\n'); // Split original markdown by single newlines
+    const lines = html.split('\n');
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
-        let processedLineContent = ""; // Content of the line after list marker removal
+        let processedLine = "";
         let listMatch = line.match(/^\s*([\*\-\+])\s+(.*)/) || line.match(/^\s*(\d+)\.\s+(.*)/);
 
         if (listMatch) {
             const listCharOrNum = listMatch[1];
-            // Apply inline formatting only to the text part of the list item
             const itemText = applyInlineToTextNodes(listMatch[2]);
             const currentListType = (listCharOrNum === '*' || listCharOrNum === '-' || listCharOrNum === '+') ? 'ul' : 'ol';
 
             if (inListType !== currentListType) {
-                if (inListType) listProcessedHtml += `</${inListType}>\n`; // Close previous list
-                listProcessedHtml += `<${currentListType}>\n`; // Start new list
+                if (inListType) listProcessedHtml += `</${inListType}>\n`;
+                listProcessedHtml += `<${currentListType}>\n`;
                 inListType = currentListType;
             }
             listProcessedHtml += `<li>${itemText}</li>\n`;
-        } else { // Not a list item
-            if (inListType) { // If we were in a list, close it
+        } else {
+            if (inListType) {
                 listProcessedHtml += `</${inListType}>\n`;
                 inListType = null;
             }
-            // For non-list lines, apply inline markdown if it's not a heading or hr
+            // For non-list lines, apply inline markdown and prepare for paragraph/newline handling
+            // If it's not already a heading or hr
             if (!line.match(/^<h[1-6]>|^<hr>/)) {
-                processedLineContent = applyInlineToTextNodes(line);
+                processedLine = applyInlineToTextNodes(line);
             } else {
-                processedLineContent = line; // Already an HTML block (heading/hr)
+                processedLine = line; // Already an HTML block
             }
-            listProcessedHtml += processedLineContent + "\n";
+            listProcessedHtml += processedLine + "\n";
         }
     }
-    if (inListType) { // Close any open list at the end of all lines
+    if (inListType) { // Close any open list at the end
         listProcessedHtml += `</${inListType}>\n`;
     }
-    html = listProcessedHtml.trim(); // This html now has lists, headings, hr, and inline elements processed.
+    html = listProcessedHtml.trim();
 
-    // Paragraphs: Wrap remaining text blocks (separated by double newlines) in <p> tags.
-    // Single newlines within these blocks are converted to <br>.
-    let finalHtmlOutput = "";
-    const paragraphBlocks = html.split(/\n\s*\n+/); // Split by two or more newlines
 
-    for (const block of paragraphBlocks) {
-        const trimmedBlock = block.trim();
-        if (trimmedBlock.length === 0) continue;
-
-        // Check if the block is already a known HTML block element (list, heading, hr)
-        if (trimmedBlock.match(/^<(ul|ol|h[1-6]|hr|li)/i)) {
-            finalHtmlOutput += trimmedBlock + '\n';
-        } else {
-            // It's a paragraph of text. Wrap in <p>.
-            // Convert single newlines within this paragraph block to <br>.
-            finalHtmlOutput += `<p>${trimmedBlock.replace(/\n/g, '<br>')}</p>\n`; // MODIFIED: \n to <br>
+    // Paragraphs: Wrap lines that are not part of other block elements in <p>
+    // And convert single newlines (that are not for list separation) to <br>
+    // This is a simplified approach: treat blank lines as paragraph separators.
+    html = html.split(/\n\s*\n/).map(paragraph => { // Split by one or more blank lines
+        if (paragraph.trim().length === 0) return '';
+        // If paragraph is already a block element (list, heading, hr), don't wrap in <p>
+        if (paragraph.match(/^<(ul|ol|li|h[1-6]|hr)/i)) {
+            return paragraph.replace(/\n/g, '<br>'); // Convert internal newlines to <br>
         }
-    }
-    html = finalHtmlOutput.trim();
+        return '<p>' + paragraph.replace(/\n/g, '<br>') + '</p>';
+    }).join('');
 
-    // Clean up: remove empty <p> tags that might result from processing
+    // Clean up: remove <p><br></p> or <p></p>
     html = html.replace(/<p>\s*(<br\s*\/?>)?\s*<\/p>/gi, '');
     // Clean up <br> tags right after block openings or before block closings
-    html = html.replace(/<(ul|ol|li|h[1-6]|p|hr)>\s*<br\s*\/?>/gi, '<$1>');
+    html = html.replace(/<(ul|ol|li|h[1-6]|p|hr)><br\s*\/?>/gi, '<$1>');
     html = html.replace(/<br\s*\/?>\s*<\/(ul|ol|li|h[1-6]|p|hr)>/gi, '</$1>');
-    // Remove <br> at the very end of a <p> tag content if it's the last thing.
-    html = html.replace(/<br\s*\/?>\s*<\/p>/gi, '</p>');
 
 
     return html;
@@ -464,117 +439,19 @@ if (mathProblemFile) {
             } else { lastUploadedFileWasImage = false; lastUploadedImageSrc = ''; }
         } else {
             if (selectedFileInfo) selectedFileInfo.style.display = 'none';
-            lastUploadedFileWasImage = false;
-            lastUploadedImageSrc = '';
+            lastUploadedFileWasImage = false; lastUploadedImageSrc = '';
         }
         updateSolveButtonState();
     });
 }
 
-function revealSolution() {
-    if (hintsSection) hintsSection.style.display = 'none'; // Hide hints section
 
-    // Hide hint controls (buttons/dropdown)
-    if (iSolvedItButton) iSolvedItButton.style.display = 'none';
-    const dropdownContainer = hintConfirmationDropdownElement ? hintConfirmationDropdownElement.parentElement : null;
-    if (dropdownContainer) {
-        dropdownContainer.style.display = 'none';
-    }
-    if (nextHintButton) nextHintButton.style.display = 'none'; // Ensure the separate button is hidden too
-    if (hintMessage) hintMessage.textContent = ''; // Clear hint message
-    if (currentHintOutput) currentHintOutput.innerHTML = ''; // Clear hint content
-
-
-    // Display the solution, concepts, and practice sections
-    const solutionCard = document.getElementById('solution-display-card');
-    if (solutionCard) solutionCard.style.display = 'block';
-    if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'block';
-    if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'block';
-
-
-    // Now, render the full solution using the stored data
-    displaySolution(currentSolutionText, currentProblemText, lastIdentifiedConceptsString, currentProblemFileURI);
-
-    // renderSolutionSteps (called by displaySolution) will handle showing the `nextStepButton` if in 'one-by-one' mode.
-
-    // Scroll to the solution section
-    const solutionAnchor = document.getElementById('solution-related-content');
-    if (solutionAnchor) {
-        solutionAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
-
-
-function handleSolvedIt() {
-    if (hintsSection) hintsSection.style.display = 'none'; // Hide hints section
-
-    // Hide hint controls (buttons/dropdown)
-    if (iSolvedItButton) iSolvedItButton.style.display = 'none';
-    const dropdownContainer = hintConfirmationDropdownElement ? hintConfirmationDropdownElement.parentElement : null;
-    if (dropdownContainer) {
-        dropdownContainer.style.display = 'none';
-    }
-    if (nextHintButton) nextHintButton.style.display = 'none'; // Ensure separate button is hidden
-    if (hintMessage) hintMessage.textContent = ''; // Clear hint message
-    if (currentHintOutput) currentHintOutput.innerHTML = ''; // Clear hint content
-
-
-    // Display a success message in the alert box
-    showAlert("Great job! You solved the problem!", "success");
-
-    // Reset hint state
-    currentHintIndex = 0;
-    receivedHints = []; // Clear hints data
-
-    // Clear the main problem input area for a new problem
-    clearSelectedFile();
-    if (mathProblemText) mathProblemText.value = '';
-
-    // Hide all result sections, including solution/concepts/practice
-    if (solutionOutput) solutionOutput.innerHTML = '<p class="text-muted">Your step-by-step solution will appear here...</p>';
-    if (copySolutionButton) copySolutionButton.style.display = 'none';
-    if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
-    if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
-    const solutionCard = document.getElementById('solution-display-card');
-    if (solutionCard) solutionCard.style.display = 'none';
-    if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
-    if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'none';
-
-
-    // Scroll back to the solver input section
-    const solverAnchor = document.getElementById('solver-section-anchor');
-    if (solverAnchor) {
-        solverAnchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-}
-
-
-
-
-// Modify the solveUnifiedButton event listener
 if (solveUnifiedButton) {
     solveUnifiedButton.addEventListener('click', async () => {
-        // Store the current radio selection - this is for the *solution* display mode
-        let selectedSolutionDisplayMode = 'all';
-        if (displayOneByOneRadio && displayOneByOneRadio.checked) selectedSolutionDisplayMode = 'one-by-one';
-        else if (displayAllStepsRadio && displayAllStepsRadio.checked) selectedSolutionDisplayMode = 'all';
-
-
         clearAlert();
-
-        // --- Hide previous results ---
-        if (hintsSection) hintsSection.style.display = 'none'; // Hide hints
-        if (iSolvedItButton) iSolvedItButton.style.display = 'none';
-        if (nextHintButton) nextHintButton.style.display = 'none';
-        if (hintMessage) hintMessage.textContent = '';
-        if (currentHintOutput) currentHintOutput.innerHTML = '<p class="text-muted text-center">Your hint will appear here...</p>'; // Reset hint area
-
-        const solutionCard = document.getElementById('solution-display-card');
-        if (solutionCard) solutionCard.style.display = 'none'; // Hide solution
-        if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none'; // Hide concepts
-        if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none'; // Hide practice
-
+        if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
         if (practiceOutput) practiceOutput.innerHTML = '<p class="text-muted">Click \'Generate\' after getting a solution.</p>';
+        if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
         if (identifiedConceptsList) identifiedConceptsList.innerHTML = '';
         clearAlert(conceptsRefresherAlert);
         if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'none';
@@ -586,14 +463,6 @@ if (solveUnifiedButton) {
         const problemTextValue = mathProblemText ? mathProblemText.value.trim() : '';
         const file = mathProblemFile ? mathProblemFile.files[0] : null;
         if (!file) { lastUploadedFileWasImage = false; lastUploadedImageSrc = ''; }
-        else { // If file exists, prepare the preview data regardless of API success
-             if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function (e) { lastUploadedImageSrc = e.target.result; lastUploadedFileWasImage = true; }
-                reader.readAsDataURL(file);
-             } else { lastUploadedFileWasImage = false; lastUploadedImageSrc = ''; }
-        }
-
 
         if (!problemTextValue && !file) { showAlert('Please type a problem or upload a file.'); return; }
         if (isRecording && recognition) recognition.stop();
@@ -602,14 +471,10 @@ if (solveUnifiedButton) {
         if (solutionOutput) solutionOutput.innerHTML = `<div class="d-flex justify-content-center align-items-center" style="min-height: 150px;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><span class="ms-2 text-muted">Processing...</span></div>`;
         if (copySolutionButton) copySolutionButton.style.display = 'none';
 
-        // Reset global state variables related to the previous problem/solution/hints
         currentProblemText = ''; currentProblemFileURI = null; currentSolutionText = '';
         currentSolutionStepsArray = []; currentStepIndex = 0;
-        receivedHints = []; currentHintIndex = 0;
-        lastIdentifiedConceptsString = '';
-
         if (nextStepButton) nextStepButton.style.display = 'none';
-
+        if (displayAllStepsRadio) displayAllStepsRadio.checked = true;
 
         const formData = new FormData();
         if (problemTextValue) formData.append('problemText', problemTextValue);
@@ -624,15 +489,15 @@ if (solveUnifiedButton) {
             }
 
             if (!response.ok) {
-                // Show error in the main alert box
-                showAlert(`Failed to get solution: ${responseData?.error || responseData?.message || `HTTP error! Status: ${response.status}`}`, 'danger');
-                 // Show error in the main solution output area as a fallback
-                 if (solutionOutput) solutionOutput.innerHTML = `<p class="text-danger">${escapeHtml(responseData?.error || responseData?.message || `Error processing request. Status: ${response.status}`)}</p>`;
-                 // Ensure cards remain hidden or show empty
-                 if (solutionCard) solutionCard.style.display = 'block'; // Show the card to display the error message
-                 if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
-                 if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
-
+                if (responseData?.error) {
+                    showAlert(`Failed: ${escapeHtml(responseData.error)}`);
+                    if (responseData.preemptiveScaffolding?.length > 0) {
+                        if (scaffoldingList) scaffoldingList.innerHTML = responseData.preemptiveScaffolding.map(tip => `<li>${escapeHtml(tip)}</li>`).join('');
+                        if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'block';
+                        renderMathJax(preemptiveScaffoldingDiv);
+                    }
+                    if (solutionOutput) solutionOutput.innerHTML = `<p class="text-danger">${escapeHtml(responseData.error)}</p>`;
+                } else { throw new Error(responseData?.message || `HTTP error! Status: ${response.status}`); }
                 return; // Stop further processing on error
             }
 
@@ -645,131 +510,37 @@ if (solveUnifiedButton) {
                 if (preemptiveScaffoldingDiv) preemptiveScaffoldingDiv.style.display = 'none';
             }
 
-            // Store ALL received data
-            currentProblemText = problemTextValue; // Keep original text
-            currentProblemFileURI = responseData.file_uri || null; // Store file URI if returned
-            currentSolutionText = responseData.solution || '';
-            lastIdentifiedConceptsString = responseData.identifiedConcepts || 'Not identified.';
-            receivedHints = Array.isArray(responseData.hints) ? responseData.hints : []; // Store hints, ensure it's an array
 
-            // Display uploaded image preview if available
-             if (lastUploadedFileWasImage && lastUploadedImageSrc) {
-                 if (questionImageElement) questionImageElement.src = lastUploadedImageSrc;
-                 if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'block';
-             } else {
-                 if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
-                 if (questionImageElement) questionImageElement.src = '#';
-             }
+            if (responseData.solution) {
+                displaySolution(responseData.solution, problemTextValue, responseData.identifiedConcepts, responseData.file_uri);
+                if (mathProblemText) mathProblemText.value = '';
+                // Clear file input, but keep lastUploadedImageSrc for displaySolution
+                if (mathProblemFile) mathProblemFile.value = '';
+                if (selectedFileInfo) selectedFileInfo.innerHTML = '';
 
-
-            // Decide whether to show hints or go straight to solution
-            if (receivedHints.length > 0 && currentSolutionText) {
-                // Hints available - start the hint flow
-                currentHintIndex = 0;
-                displayHint(currentHintIndex); // Display the first hint
-
-                // Clear solution output area temporarily
-                if (solutionOutput) solutionOutput.innerHTML = '';
-                 // Ensure solution card and others are hidden
-                 if (solutionCard) solutionCard.style.display = 'none';
-                 if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
-                 if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
-
-            } else if (currentSolutionText) {
-                // No hints available or generated, but got a solution - show solution directly
-                showAlert("Hints could not be generated for this problem. Displaying the solution.", "info");
-                 // Call revealSolution which will display everything
-                revealSolution();
-
+                if (mathProblemText) { mathProblemText.style.height = 'auto'; mathProblemText.dispatchEvent(new Event('input')); }
             } else {
-                // Neither hints nor solution were generated
-                showAlert("Could not generate hints or a solution for this problem. Please try rephrasing or a different problem.", "warning");
-                if (solutionOutput) solutionOutput.innerHTML = '<p class="text-warning">No solution generated.</p>';
-                // Show the solution card to show the warning, but hide concepts/practice
-                 if (solutionCard) solutionCard.style.display = 'block';
-                 if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
-                 if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
+                // If no solution but there was preemptive scaffolding, don't throw error, just inform.
+                if (!responseData.preemptiveScaffolding || responseData.preemptiveScaffolding.length === 0) {
+                    throw new Error("Solution missing in the server response.");
+                }
+                if (solutionOutput) solutionOutput.innerHTML = '<p class="text-warning">Tips provided based on input. No full solution generated.</p>';
 
             }
-
-             // Restore the previously selected radio button state *after* solution is displayed
-             // This logic might need adjustment depending on *when* you want the user to select the mode.
-             // If mode selection should only affect the *final* solution display, keep it here.
-             // If you wanted hints to also be step-by-step, the logic would be different.
-             // Assuming mode affects final solution display:
-             if (selectedSolutionDisplayMode === 'one-by-one' && displayOneByOneRadio) {
-                 // Do nothing, displaySolution will handle rendering 'all' first,
-                 // then the user needs to click the radio to switch to 'one-by-one'.
-                 // Or we could force the initial render mode here IF solution was revealed directly.
-                 // Let's handle the switch later in revealSolution if needed, or rely on user clicking radio.
-             } else if (displayAllStepsRadio) {
-                 // Ensure the 'all' radio is checked by default if no preference was stored.
-                 displayAllStepsRadio.checked = true;
-             }
-
-
         } catch (error) {
             console.error('Error solving problem:', error);
             showAlert(`Failed to get solution: ${error.message.includes('Failed to fetch') ? 'Network error or backend unavailable.' : escapeHtml(error.message)}`);
             if (solutionOutput) solutionOutput.innerHTML = '<p class="text-danger">Error processing request. Please try again.</p>';
-             // Ensure cards remain hidden or show empty/error state
-             const solutionCard = document.getElementById('solution-display-card');
-             if (solutionCard) solutionCard.style.display = 'block'; // Show card with error
-             if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
-             if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
-             if (hintsSection) hintsSection.style.display = 'none';
-
-
+            if (copySolutionButton) copySolutionButton.style.display = 'none';
+            if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
+            if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
+            if (uploadedQuestionImagePreviewArea) uploadedQuestionImagePreviewArea.style.display = 'none';
         } finally {
             hideButtonLoading(solveUnifiedButton);
-            updateSolveButtonState(); // Re-enable solve button
+            updateSolveButtonState();
         }
     });
 }
-
-
-
-// Add event listener for I Solved It button (NEW)
-if (iSolvedItButton) {
-    iSolvedItButton.addEventListener('click', () => {
-        handleSolvedIt();
-    });
-}
-
-
-const dropdownContainer = hintConfirmationDropdownElement ? hintConfirmationDropdownElement.parentElement : null;
-
-if (dropdownContainer) {
-     dropdownContainer.addEventListener('click', (event) => {
-         const target = event.target.closest('.dropdown-item');
-         if (target) {
-             const action = target.dataset.action;
-
-             if (action === 'solved') {
-                 // User clicked "Yes, thanks!"
-                 handleSolvedIt();
-                 // Bootstrap dropdown should close automatically on item click
-             } else if (action === 'need-next') {
-                 // User clicked "No, need next hint" --> IMPLEMENT THE LOGIC HERE
-                 clearAlert(); // Clear any previous alerts
-
-                 // Logic to show the next hint or the solution
-                 if (currentHintIndex < receivedHints.length - 1) {
-                     // There are more hints available
-                     currentHintIndex++; // Move to the next hint index
-                     displayHint(currentHintIndex); // Display the next hint
-                 } else {
-                     // This was the last hint (Hint 3 of 3), reveal the full solution
-                     revealSolution(); // Call the existing function to reveal the solution
-                 }
-                 // Bootstrap dropdown should close automatically on item click
-             }
-         }
-     });
-} else {
-    console.warn("Hint confirmation dropdown or its container not found.");
-}
-
 
 const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRecognitionAPI && startSpeechButton) {
@@ -801,12 +572,12 @@ if (SpeechRecognitionAPI && startSpeechButton) {
         else if (event.error === 'audio-capture') msg = 'Could not capture audio. Check microphone.';
         showAlert(msg, 'warning'); isRecording = false;
         startSpeechButton.classList.remove('recording'); startSpeechButton.title = 'Speak your math problem';
-        startSpeechButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16"><path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/>`;
+        startSpeechButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16"><path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/></svg>`;
         recognition.previousInterim = ''; updateSolveButtonState();
     };
     recognition.onend = () => {
         isRecording = false; startSpeechButton.classList.remove('recording'); startSpeechButton.title = 'Speak your math problem';
-        startSpeechButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16"><path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/>`;
+        startSpeechButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-mic-fill" viewBox="0 0 16 16"><path d="M5 3a3 3 0 0 1 6 0v5a3 3 0 0 1-6 0z"/><path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3.5 8V7a.5.5 0 0 1 .5-.5"/></svg>`;
         recognition.previousInterim = ''; updateSolveButtonState();
     };
     startSpeechButton.addEventListener('click', () => {
@@ -905,7 +676,7 @@ function renderSolutionSteps(mode) { // From original index.html
         if (nextStepButton) nextStepButton.style.display = 'none';
         const endMsg = document.getElementById('endOfSolutionMessage');
         if (endMsg) endMsg.style.display = 'none'; // Hide end message for 'all' mode
-    } else if (mode === 'one-by-one' || (displayOneByOneRadio && displayOneByOne.checked)) {
+    } else if (mode === 'one-by-one' || (displayOneByOneRadio && displayOneByOneRadio.checked)) {
         solutionOutput.innerHTML = currentSolutionStepsArray.slice(0, currentStepIndex + 1).join('');
         const stepControlsDiv = document.getElementById('stepByStepControls');
         const endMsg = document.getElementById('endOfSolutionMessage');
@@ -981,7 +752,7 @@ if (quickRefresherButton) {
             try { responseData = await response.json(); } catch (e) {
                 const txt = await response.text();
                 if (!response.ok) throw new Error(`Server error (${response.status}): ${txt.substring(0, 200)}`);
-                throw new Error("Received an unexpected non-JSON response from check server.");
+                throw new Error(`Received invalid JSON from server. Raw content: ${txt.substring(0, 500)}...`);
             }
             if (!response.ok) throw new Error(responseData?.error || responseData?.message || `HTTP error! Status: ${response.status}`);
 
@@ -1205,13 +976,13 @@ function renderChatHistory() { // Original logic, dashboard styles apply
     if (!chatWindow) return;
     chatWindow.innerHTML = '';
     if (conversationHistory.length === 0) {
-        chatWindow.innerHTML = `<div class="sample-question-container"><h4><i class="bi bi-brain me-2"></i>गणित के सिद्धांतों के बारे में प्रोफेसर उल्लू से कुछ भी पूछें!</h4><p class="text-muted">उदाहरण:</p><div class="sample-question-chips"><div class="sample-question-chip" onclick="fillSampleQuestion('पाइथागोरस कौन थे?')">पाइथागोरस कौन थे?</div><div class="sample-question-chip" onclick="fillSampleQuestion('जटिल संख्याएँ समझाएँ')">जटिल संख्याएँ समझाएँ</div><div class="sample-question-chip" onclick="fillSampleQuestion('बराबरी के चिन्ह की उत्पत्ति?')">बराबरी के चिन्ह की उत्पत्ति?</div> <div class="sample-question-chip" onclick="fillSampleQuestion('यूक्लिड की एलिमेंट्स?')">यूक्लिड की एलिमेंट्स?</div></div></div>`;
+        chatWindow.innerHTML = `<div class="sample-question-container"><h4><i class="bi bi-brain me-2"></i>प्रोफेसर से गणित के सिद्धांत के बारे में कुछ भी पूछें!</h4><p class="text-muted">उदाहरण:</p><div class="sample-question-chips"><div class="sample-question-chip" onclick="fillSampleQuestion('पाइथागोरस कौन थे?')">पाइथागोरस कौन थे?</div><div class="sample-question-chip" onclick="fillSampleQuestion('जटिल संख्याएँ समझाएँ')">जटिल संख्याएँ समझाएँ</div><div class="sample-question-chip" onclick="fillSampleQuestion('बराबरी के चिन्ह की उत्पत्ति?')">बराबरी के चिन्ह की उत्पत्ति?</div> <div class="sample-question-chip" onclick="fillSampleQuestion('यूक्लिड की एलिमेंट्स?')">यूक्लिड की एलिमेंट्स?</div></div></div>`;
     } else {
         conversationHistory.forEach(msg => {
             if (msg.role === 'user') {
                 chatWindow.innerHTML += `<div class="user-message"><div>${escapeHtml(msg.content)}</div></div>`;
             } else if (msg.role === 'bot') {
-                let botContent = msg.content.replace(/\*\*(.*?)\*\*|__(.*?)__/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/`(.*?)`/g, '<code>$1</code>');
+                let botContent = msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/`(.*?)`/g, '<code>$1</code>');
                 chatWindow.innerHTML += `<div class="bot-message"><img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Owl Avatar"><div><b>Professor Owl:</b> ${botContent}</div></div>`;
             }
         });
@@ -1275,7 +1046,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('section, header, footer').forEach(el => el.classList.add('fade-in'));
     if (practiceLoading) practiceLoading.style.display = 'none';
     updateSolveButtonState();
-    if (hintsSection) hintsSection.style.display = 'none'; // Hide hints initially
     if (conceptsRefresherSection) conceptsRefresherSection.style.display = 'none';
     if (practiceProblemsSectionCard) practiceProblemsSectionCard.style.display = 'none';
     const solutionCard = document.getElementById('solution-display-card');
