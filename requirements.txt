@@ -1,0 +1,9 @@
+google-genai
+flask
+flask-cors
+langchain-google-genai
+gunicorn
+firebase-admin
+pymysql
+pandas
+openpyxl

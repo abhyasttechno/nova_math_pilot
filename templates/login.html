@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Head and Style sections remain the same -->
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Nova Maths - Auth</title><link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet"><style> * { box-sizing: border-box; } body { margin: 0; font-family: 'Poppins', sans-serif; display: flex; height: 100vh; background: linear-gradient(to right, #1A1A40 60%, #ffffff 40%); color: #333; } .left-panel { flex: 3; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #fff; padding: 60px 50px; } .bg-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; } .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 30, 0.6); z-index: 1; } .left-panel .content { position: relative; z-index: 2; max-width: 500px; text-align: left; } .left-panel h1 { font-size: 3rem; font-weight: bold; color: #00ffff; text-shadow: 0 0 8px #00ffff66; margin-bottom: 20px; } .left-panel p { font-size: 1.2rem; line-height: 1.6; color: #f0f0f0; font-weight: 300; } .right-panel { flex: 2; background-color: #ffffff; padding: 40px; overflow-y: auto; } .form-container { max-width: 400px; margin: auto; } .form-container h2 { margin-bottom: 20px; color: #1A1A40; } label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: 500; } input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; } .form-group { margin-bottom: 15px; } button { width: 100%; padding: 12px; background-color: #1A1A40; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; display: flex; justify-content: center; align-items: center; min-height: 44px; } button:hover { background-color: #333366; } .switch-auth { margin-top: 15px; text-align: center; } .switch-auth a { color: #2196F3; text-decoration: none; font-weight: bold; cursor: pointer; } .switch-auth a:hover { text-decoration: underline; } button .button-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; } @keyframes spin { to { transform: rotate(360deg); } } .hidden { display: none !important; } button:disabled { background-color: #333366; cursor: not-allowed; } </style>
+</head>
+<body>
+    <!-- Left Panel with video remains the same -->
+    <div class="left-panel"><video autoplay muted loop playsinline class="bg-video"><source src="{{url_for('static', filename='maths.mp4')}}" type="video/mp4"></video><div class="overlay"></div><div class="content"><h1>Nova Maths</h1><p>Unlock Your Math Potential.<br />Nova Maths provides intelligent, step-by-step assistance to help you conquer any math problem, anytime, anywhere.</p></div></div>
+    
+    <div class="right-panel">
+        <form class="form-container" id="signupForm" style="display:none;" onsubmit="handleSignup(event)">
+            <h2>Signup</h2>
+            <!-- All fields are now in one block. DOB is now required. -->
+            <div class="form-group"><label for="userType">I am a...</label><select id="userType" name="user_type" required><option value="">-- Select Role --</option><option value="student">Student</option><option value="admin">Admin</option></select></div>
+            <div class="form-group"><label for="fname">First Name</label><input type="text" id="fname" name="f_name" required /></div>
+            <div class="form-group"><label for="lname">Last Name</label><input type="text" id="lname" name="l_name" required /></div>
+            <div class="form-group"><label for="dob">Date of Birth (for User ID)</label><input type="date" id="dob" name="dob" required /></div>
+            <div class="form-group"><label for="gender">Gender</label><select id="gender" name="gender" required><option value="">-- Select --</option><option value="Male">Male</option><option value="Female">Female</option><option value="Other">Other</option></select></div>
+            <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" required /></div>
+            <div class="form-group"><label for="mobile_no">Mobile Number</label><input type="tel" id="mobile_no" name="mobile_no" required /></div>
+            <div class="form-group"><label for="school">School</label><input type="text" id="school" name="school" /></div>
+            <div class="form-group"><label for="class">Class</label><input type="text" id="class" name="class" /></div>
+            <div class="form-group"><label for="board">Board</label><input type="text" id="board" name="board" /></div>
+            <div class="form-group"><label for="med_ins">Medium of Instruction</label><select id="med_ins" name="med_ins" required><option value="">-- Select --</option><option value="Hindi">Hindi</option><option value="English">English</option></select></div>
+            <div class="form-group"><label for="state">State</label><input type="text" id="state" name="state" /></div>
+            <div class="form-group"><label for="city">City</label><input type="text" id="city" name="city" /></div>
+            <div class="form-group"><label for="password">Password</label><input type="password" id="password" name="password" required /></div>
+            <div class="form-group"><label for="confirmPassword">Confirm Password</label><input type="password" id="confirmPassword" name="confirm_password" required /></div>
+            <button type="submit"><span class="button-text">Sign Up</span><span class="button-spinner hidden"></span></button>
+            <div class="switch-auth">Already have an account? <a onclick="showLogin()">Login here</a></div>
+        </form>
+
+        <form class="form-container" id="loginForm" action="/login" method="post">
+            <!-- Login form now accepts User ID, Email, or Mobile -->
+            <h2>Login</h2>
+            <div class="form-group"><label for="loginIdentifier">User ID</label><input type="text" id="loginIdentifier" name="identifier" required /></div>
+            <div class="form-group"><label for="loginPassword">Password</label><input type="password" id="loginPassword" name="password" required /></div>
+            <button type="submit"><span class="button-text">Login</span><span class="button-spinner hidden"></span></button>
+            <div class="switch-auth">Don't have an account? <a onclick="showSignup()">Signup here</a></div>
+        </form>
+
+        <form class="form-container hidden" id="resetPasswordForm" action="/force-reset-password" method="post">
+    <h2>Reset Your Password</h2>
+    <p style="font-size: 14px; color: #555; margin-bottom: 20px;">
+        For security, you must set a new password before you can proceed.
+    </p>
+
+    <!-- This hidden field is crucial. It will carry the user_id to the next step. -->
+    <input type="hidden" name="user_id" value="{{ user_id_to_reset }}">
+    
+    <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" name="new_password" required minlength="8" />
+    </div>
+    <div class="form-group">
+        <label for="confirmNewPassword">Confirm New Password</label>
+        <input type="password" id="confirmNewPassword" name="confirm_new_password" required />
+    </div>
+
+    <!-- We can display errors here -->
+    {% if error %}
+        <p style="color: red; font-size: 14px;">{{ error }}</p>
+    {% endif %}
+
+    <button type="submit">
+        <span class="button-text">Set New Password & Login</span>
+        <span class="button-spinner hidden"></span>
+    </button>
+</form>
+    </div>
+
+<script>
+    // --- The JavaScript section ---
+    const signupFormEl = document.getElementById("signupForm");
+    const loginFormEl = document.getElementById("loginForm");
+
+    function showLogin() { signupFormEl.style.display = 'none'; loginFormEl.style.display = 'block'; }
+    function showSignup() { loginFormEl.style.display = 'none'; signupFormEl.style.display = 'block'; }
+    showLogin();
+
+    async function handleSignup(event) {
+        event.preventDefault();
+        const form = event.target;
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const password = form.elements['password'].value;
+        const confirmPassword = form.elements['confirm_password'].value;
+        if (password !== confirmPassword) { alert("Passwords do not match!"); return; }
+        if (password.length < 8) { alert("Password must be at least 8 characters long."); return; }
+        
+        const payload = Object.fromEntries(new FormData(form).entries());
+        const button = form.querySelector('button[type="submit"]');
+        const buttonText = button.querySelector('.button-text');
+        const spinner = button.querySelector('.button-spinner');
+
+        try {
+            button.disabled = true;
+            buttonText.classList.add('hidden');
+            spinner.classList.remove('hidden');
+
+            const response = await fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            // --- THIS IS THE FINAL, CORRECTED ALERT LOGIC ---
+            if (response.ok) {
+                // On success, show the custom message AND the new User ID from the response.
+                alert(result.message + "\n\nYour new User ID is: " + result.user_id);
+                
+                form.reset();
+                showLogin();
+            } else {
+                // If there was an error, just show the error message.
+                alert(result.message);
+            }
+
+        } catch (error) {
+            console.error('Signup Error:', error);
+            alert('An error occurred. Please try again later.');
+        } finally {
+            button.disabled = false;
+            buttonText.classList.remove('hidden');
+            spinner.classList.add('hidden');
+        }
+    }
+
+    
+
+    // Login function remains the same
+    async function handleLogin(event) {
+        event.preventDefault();
+        const form = event.target;
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+        const payload = Object.fromEntries(new FormData(form).entries());
+        const button = form.querySelector('button[type="submit"]');
+        const buttonText = button.querySelector('.button-text');
+        const spinner = button.querySelector('.button-spinner');
+        try {
+            button.disabled = true;
+            buttonText.classList.add('hidden');
+            spinner.classList.remove('hidden');
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                window.location.href = result.redirect;
+            } else {
+                alert(result.message);
+            }
+        } catch (error) {
+            console.error('Login Error:', error);
+            alert('An error occurred during login. Please try again.');
+        } finally {
+            button.disabled = false;
+            buttonText.classList.remove('hidden');
+            spinner.classList.add('hidden');
+        }
+    }
+
+
+    // ADD THIS SCRIPT at the end of your <script> tag
+
+// This Jinja2 block will only execute if the backend sends show_reset_form=True
+
+</script>
+</body>
+</html>
