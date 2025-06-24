@@ -165,7 +165,15 @@
 
 
     // ADD THIS SCRIPT at the end of your <script> tag
-
+{% if show_reset_form %}
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hide the login and signup forms
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('signupForm').style.display = 'none';
+        // Show our new password reset form
+        document.getElementById('resetPasswordForm').classList.remove('hidden');
+    });
+{% endif %}
 // This Jinja2 block will only execute if the backend sends show_reset_form=True
 
 </script>
