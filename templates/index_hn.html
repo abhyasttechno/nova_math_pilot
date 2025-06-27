@@ -54,13 +54,23 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
+                    {% if user_id %}
+                    <li class="nav-item d-flex align-items-center ms-lg-2 mt-2 mt-lg-0">
+                        स्वागत, <span class="nav-link active">{{ user_id }}</span>
+                    </li>
+                    {% endif %}
+                   
                     <li class="nav-item"><a class="nav-link" href="#professor-owl-anchor">प्रोफेसर उल्लू</a></li>
                     <li class="nav-item"><a class="nav-link" href="#feedback-anchor">प्रतिक्रिया</a></li>
-
+                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                        <!-- Original index.html login/portal button -->
+                        <a class="nav-link btn btn-outline-primary" href="/logout">लॉगआउट </a>
+                    </li>
                 </ul>
             </div>
+           
         </div>
     </nav>
 

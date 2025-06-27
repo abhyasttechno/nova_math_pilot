@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Admin Panel - Nova Maths</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <style>
+    /* --- Styles (Copied from your existing panel for consistency) --- */
+    :root {
+      --primary-color: #0077b6; --primary-dark: #023e8a; --secondary-color: #6c757d; --success-color: #2a9d8f; --error-color: #e76f51; --light-bg: #f4f7fa; --text-color: #333; --border-color: #e0e0e0; --white: #ffffff; --shadow: 0 4px 12px rgba(0, 0, 0, 0.08); --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+    * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+    body { display: flex; height: 100vh; background-color: var(--light-bg); color: var(--text-color); overflow: hidden; }
+    .sidebar { width: 260px; background-color: var(--white); display: flex; flex-direction: column; padding: 25px 15px; border-right: 1px solid var(--border-color); flex-shrink: 0; }
+    .sidebar .logo { font-size: 24px; font-weight: 700; color: var(--primary-color); padding: 0 15px 25px 15px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+    .sidebar .menu-item { display: flex; align-items: center; padding: 14px 20px; margin-bottom: 8px; border-radius: 8px; cursor: pointer; color: var(--secondary-color); text-decoration: none; font-weight: 500; transition: all 0.3s ease; }
+    .sidebar .menu-item .material-symbols-outlined { margin-right: 15px; font-size: 24px; }
+    .sidebar .menu-item:hover, .sidebar .menu-item.active { background-color: var(--primary-color); color: var(--white); }
+    .main-content { flex-grow: 1; padding: 30px; overflow-y: auto; }
+    .header { margin-bottom: 30px; }
+    .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .header p { color: var(--secondary-color); }
+    .content-section { display: none; animation: fadeInUp 0.5s ease forwards; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .card { background: var(--white); padding: 30px; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 30px; }
+    .card-header { font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+    th { font-weight: 600; color: var(--secondary-color); font-size: 14px; text-transform: uppercase; }
+    tbody tr:hover { background-color: var(--light-bg); }
+    .btn { padding: 10px 20px; border: none; cursor: pointer; border-radius: 8px; font-size: 14px; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-primary { background-color: var(--primary-color); color: white; }
+    .btn-primary:hover { background-color: var(--primary-dark); }
+    .btn-success { background-color: var(--success-color); color: white; }
+    .btn-edit { background-color: #fca311; color: white; }
+    .btn-danger { background-color: var(--error-color); color: white; }
+    .filters { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-group { display: flex; flex-direction: column; gap: 5px; }
+    .filter-group label { font-size: 14px; font-weight: 500; color: var(--secondary-color); }
+    .filter-group input, .filter-group select { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); min-width: 180px; }
+    .message-div { padding: 20px; text-align: center; color: var(--secondary-color); font-style: italic; }
+    /* Modal styles */
+    .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+    .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 12px; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px; }
+    .modal-header h2 { margin: 0; }
+    .close-btn { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+    #editUserForm { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { margin-bottom: 5px; font-weight: 500; }
+    .form-group input { padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; }
+    .modal-actions { grid-column: 1 / -1; text-align: right; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2 class="logo">Nova SuperAdmin</h2>
+    <div class="menu">
+      <a class="menu-item" onclick="showSection('users', this)">
+        <span class="material-symbols-outlined">manage_accounts</span> User Logins
+      </a>
+      <a class="menu-item" onclick="showSection('audit', this)">
+        <span class="material-symbols-outlined">policy</span> Audit Trail
+      </a>
+      <a class="menu-item" onclick="showSection('survey', this)">
+        <span class="material-symbols-outlined">quiz</span> Student Surveys
+      </a>
+      <a class="menu-item" href="/logout">
+        <span class="material-symbols-outlined">logout</span> Logout
+      </a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header">
+      <h1>Super Admin Dashboard</h1>
+      <p>Monitor and manage all school activities.</p>
+    </div>
+
+    <!-- User Logins Report Section -->
+    <div id="users-section" class="content-section">
+      <div class="card">
+        <div class="card-header">User Logins Report</div>
+        <div class="filters">
+            <div class="filter-group">
+                <label for="users-school-filter">School</label>
+                <select id="users-school-filter"><option value="">All Schools</option></select>
+            </div>
+            <div class="filter-group">
+                <label for="users-from-date">Created From</label>
+                <input type="date" id="users-from-date">
+            </div>
+            <div class="filter-group">
+                <label for="users-to-date">Created To</label>
+                <input type="date" id="users-to-date">
+            </div>
+            <button class="btn btn-primary" onclick="fetchReportData('users')">Filter</button>
+            <button class="btn btn-success" onclick="downloadReport('user-logins')">
+                <span class="material-symbols-outlined">download</span>Excel
+            </button>
+        </div>
+        <div id="users-message" class="message-div">Loading...</div>
+        <div class="table-wrapper"><table id="users-table"></table></div>
+      </div>
+    </div>
+
+    <!-- Audit Trail Report Section -->
+    <div id="audit-section" class="content-section">
+      <div class="card">
+        <div class="card-header">Audit Trail Report</div>
+        <div class="filters">
+            <div class="filter-group">
+                <label for="audit-school-filter">School</label>
+                <select id="audit-school-filter"><option value="">All Schools</option></select>
+            </div>
+            <div class="filter-group">
+                <label for="audit-from-date">Date From</label>
+                <input type="date" id="audit-from-date">
+            </div>
+            <div class="filter-group">
+                <label for="audit-to-date">Date To</label>
+                <input type="date" id="audit-to-date">
+            </div>
+            <button class="btn btn-primary" onclick="fetchReportData('audit')">Filter</button>
+            <button class="btn btn-success" onclick="downloadReport('audit-trail')">
+                <span class="material-symbols-outlined">download</span>Excel
+            </button>
+        </div>
+        <div id="audit-message" class="message-div">Loading...</div>
+        <div class="table-wrapper"><table id="audit-table"></table></div>
+      </div>
+    </div>
+
+    <!-- Student Survey Report Section -->
+    <div id="survey-section" class="content-section">
+        <div class="card">
+            <div class="card-header">Student Survey Report</div>
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="survey-school-filter">School</label>
+                    <select id="survey-school-filter"><option value="">All Schools</option></select>
+                </div>
+                <div class="filter-group">
+                    <label for="survey-from-date">Date From</label>
+                    <input type="date" id="survey-from-date">
+                </div>
+                <div class="filter-group">
+                    <label for="survey-to-date">Date To</label>
+                    <input type="date" id="survey-to-date">
+                </div>
+                <button class="btn btn-primary" onclick="fetchReportData('survey')">Filter</button>
+                <button class="btn btn-success" onclick="downloadReport('student-surveys')">
+                    <span class="material-symbols-outlined">download</span>Excel
+                </button>
+            </div>
+            <div id="survey-message" class="message-div">Loading...</div>
+            <div class="table-wrapper"><table id="survey-table"></table></div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit User Details</h2>
+                <span class="close-btn" onclick="closeModal()">×</span>
+            </div>
+            <form id="editUserForm" onsubmit="saveUserChanges(event)">
+                <input type="hidden" id="edit-user-id">
+                <div class="form-group"><label>First Name</label><input id="edit-f_name" required></div>
+                <div class="form-group"><label>Last Name</label><input id="edit-l_name" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="edit-email" required></div>
+                <div class="form-group"><label>Mobile No</label><input id="edit-mobile_no" required></div>
+                <div class="form-group"><label>School</label><input id="edit-school"></div>
+                <div class="form-group"><label>Class</label><input id="edit-class"></div>
+                <div class="form-group"><label>Board</label><input id="edit-board"></div>
+                <div class="form-group"><label>State</label><input id="edit-state"></div>
+                <div class="form-group"><label>City</label><input id="edit-city"></div>
+                <div class="form-group"><label>User Type</label><input id="edit-user_type" readonly style="background:#eee;"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-success">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+
+<script>
+    let allUsersData = []; // Cache for user data to populate edit modal
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchSchools();
+        showSection('users', document.querySelector('.sidebar .menu-item'));
+    });
+
+    function showSection(sectionId, element) {
+        document.querySelectorAll('.content-section').forEach(div => div.style.display = 'none');
+        document.getElementById(`${sectionId}-section`).style.display = 'block';
+
+        document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+        element.classList.add('active');
+        fetchReportData(sectionId);
+    }
+
+    async function fetchSchools() {
+        try {
+            const response = await fetch('/get-schools');
+            const schools = await response.json();
+            const schoolFilters = document.querySelectorAll('select[id$="-school-filter"]');
+            schoolFilters.forEach(select => {
+                schools.forEach(school => {
+                    const option = document.createElement('option');
+                    option.value = school;
+                    option.textContent = school;
+                    select.appendChild(option);
+                });
+            });
+        } catch (error) {
+            console.error('Failed to fetch schools:', error);
+        }
+    }
+
+    async function fetchReportData(type) {
+        const table = document.getElementById(`${type}-table`);
+        const messageDiv = document.getElementById(`${type}-message`);
+        table.innerHTML = '';
+        messageDiv.textContent = 'Loading...';
+        messageDiv.style.display = 'block';
+
+        const school = document.getElementById(`${type}-school-filter`).value;
+        const fromDate = document.getElementById(`${type}-from-date`).value;
+        const toDate = document.getElementById(`${type}-to-date`).value;
+
+        const params = new URLSearchParams({ school, from_date: fromDate, to_date: toDate });
+        const endpointMap = {
+            'users': '/superadmin/api/user-logins',
+            'audit': '/superadmin/api/audit-trail',
+            'survey': '/superadmin/api/student-surveys'
+        };
+
+        try {
+            const response = await fetch(`${endpointMap[type]}?${params}`);
+            const result = await response.json();
+
+            if (!response.ok) throw new Error(result.message);
+
+            if (result.data.length === 0) {
+                messageDiv.textContent = 'No records found for the selected criteria.';
+                return;
+            }
+            
+            messageDiv.style.display = 'none';
+            renderTable(type, result.data);
+
+        } catch (error) {
+            console.error(`Error fetching ${type} data:`, error);
+            messageDiv.textContent = `Error: ${error.message}`;
+        }
+    }
+
+    function renderTable(type, data) {
+        const table = document.getElementById(`${type}-table`);
+        if (!data || data.length === 0) return;
+        
+        if (type === 'users') allUsersData = data; // Cache user data
+
+        const headers = Object.keys(data[0]);
+        let headerHTML = '<thead><tr>';
+        headers.forEach(h => headerHTML += `<th>${h.replace(/_/g, ' ')}</th>`);
+        if (type === 'users') headerHTML += '<th>Actions</th>';
+        headerHTML += '</tr></thead>';
+
+        let bodyHTML = '<tbody>';
+        data.forEach(row => {
+            bodyHTML += '<tr>';
+            headers.forEach(header => bodyHTML += `<td>${row[header] || 'N/A'}</td>`);
+            if (type === 'users') {
+                bodyHTML += `<td>
+                    <button class="btn btn-edit btn-sm" onclick="openEditModal('${row.user_id}')">Edit</button>
+                   
+                </td>`;
+            }
+            bodyHTML += '</tr>';
+        });
+        bodyHTML += '</tbody>';
+
+        table.innerHTML = headerHTML + bodyHTML;
+    }
+
+   function downloadReport(reportType) {
+    // --- FIX IS HERE ---
+    // Determine the correct ID prefix based on the reportType.
+    let idPrefix;
+    if (reportType.startsWith('user')) {
+        idPrefix = 'users';
+    } else if (reportType.startsWith('audit')) {
+        idPrefix = 'audit';
+    } else if (reportType.startsWith('student')) {
+        idPrefix = 'survey';
+    } else {
+        console.error("Unknown report type for download:", reportType);
+        alert("An unknown error occurred while preparing the download.");
+        return; // Stop if the report type is invalid
+    }
+    // --- END OF FIX ---
+
+    // Now, we use the correct idPrefix to find the elements
+    const school = document.getElementById(`${idPrefix}-school-filter`).value;
+    const fromDate = document.getElementById(`${idPrefix}-from-date`).value;
+    const toDate = document.getElementById(`${idPrefix}-to-date`).value;
+
+    const params = new URLSearchParams({ 
+        school: school, 
+        from_date: fromDate, 
+        to_date: toDate 
+    });
+
+    // This part remains the same and will now work correctly
+    window.location.href = `/superadmin/download/${reportType}?${params}`;
+}
+
+    // --- User Edit/Delete Functions ---
+    const modal = document.getElementById('editUserModal');
+    function openEditModal(userId) {
+        const userData = allUsersData.find(u => u.user_id === userId);
+        if (!userData) return;
+
+        document.getElementById('edit-user-id').value = userData.user_id;
+        document.getElementById('edit-f_name').value = userData.f_name;
+        document.getElementById('edit-l_name').value = userData.l_name;
+        document.getElementById('edit-email').value = userData.email;
+        document.getElementById('edit-mobile_no').value = userData.mobile_no;
+        document.getElementById('edit-school').value = userData.school;
+        document.getElementById('edit-class').value = userData.class;
+        document.getElementById('edit-board').value = userData.board;
+        document.getElementById('edit-state').value = userData.state;
+        document.getElementById('edit-city').value = userData.city;
+        document.getElementById('edit-user_type').value = userData.user_type;
+
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    async function saveUserChanges(event) {
+        event.preventDefault();
+        const updatedData = {
+            user_id: document.getElementById('edit-user-id').value,
+            f_name: document.getElementById('edit-f_name').value,
+            l_name: document.getElementById('edit-l_name').value,
+            email: document.getElementById('edit-email').value,
+            mobile_no: document.getElementById('edit-mobile_no').value,
+            school: document.getElementById('edit-school').value,
+            class: document.getElementById('edit-class').value,
+            board: document.getElementById('edit-board').value,
+            state: document.getElementById('edit-state').value,
+            city: document.getElementById('edit-city').value
+        };
+
+        try {
+            const response = await fetch('/superadmin/api/user/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+
+            alert('User updated successfully!');
+            closeModal();
+            fetchReportData('users'); // Refresh the table
+        } catch (error) {
+            alert(`Error updating user: ${error.message}`);
+        }
+    }
+
+    async function deleteUser(userId) {
+        if (!confirm(`Are you sure you want to delete user ${userId}? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/superadmin/api/user/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            });
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+
+            alert('User deleted successfully!');
+            fetchReportData('users'); // Refresh the table
+        } catch (error) {
+            alert(`Error deleting user: ${error.message}`);
+        }
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+</body>
+</html>
