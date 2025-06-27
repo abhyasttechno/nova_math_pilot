@@ -2,16 +2,16 @@ import os
 import json
 import re
 import mimetypes
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint,session
 # Use google.generativeai instead of google.genai based on newer library versions
 from google import genai
 from google.genai import types
 import logging
 import tempfile
 import shutil
-import datetime
 from custom_utils import get_firebase_db_client, get_client, call_gemini, call_ama_gemini
-
+import pymysql.cursors
+from datetime import timedelta,datetime
 logging.basicConfig(level=logging.INFO)
 
 en_api = Blueprint('en_api', __name__, url_prefix='/en-api')
@@ -22,6 +22,20 @@ en_api = Blueprint('en_api', __name__, url_prefix='/en-api')
 MODEL_NAME = "gemini-2.5-flash-preview-04-17"
 CHAT_MODEL = "gemini-2.0-flash-lite"
 
+def get_db_connection():
+    """Establishes a connection to the MySQL database."""
+    try:
+        connection = pymysql.connect(host='localhost',
+                                     user='root',
+                                     password='######',
+                                     db='db_novamaths',
+                                     charset='utf8mb4',
+                                     cursorclass=pymysql.cursors.DictCursor)
+        return connection
+    except pymysql.MySQLError as e:
+        print(f"Error connecting to MySQL Database: {e}")
+        return None
+    
 
 @en_api.route('/ama', methods=['POST'])
 def ama():
@@ -840,6 +854,119 @@ def refresher():
             f"An unexpected error occurred during JSON processing: {e}", exc_info=True)
         return jsonify({"error": f"An unexpected error occurred processing AI response: {type(e).__name__}"}), 500
 
+# en_api.py
+
+# ... (add this code at the end of the file, inside the en_api blueprint)
+
+# ======================================================================
+# --- STUDENT SURVEY API ENDPOINTS ---
+# ======================================================================
+
+@en_api.route('/survey/next-question', methods=['GET'])
+def get_next_survey_question():
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+
+    user_id = session['user_id']
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        with connection.cursor() as cursor:
+            # Get all previous answers for this user, ordered by most recent
+            sql = "SELECT question, response, created_at FROM student_survey WHERE user_id = %s ORDER BY created_at DESC"
+            cursor.execute(sql, (user_id,))
+            results = cursor.fetchall()
+
+            # --- Logic to determine the next question ---
+
+            # Case 1: No answers yet. Ask the first question.
+            if not results:
+                return jsonify({
+                    "question_id": "confidence_level",
+                    "question_text": "How confident are you currently in Maths?",
+                    "type": "rating_emoji" 
+                })
+
+            # Get the most recent answer
+            latest_answer = results[0]
+            
+            # Case 2: They have answered the confidence question. Check if it's time for the fear question.
+            if latest_answer['question'] == 'confidence_level':
+                time_since_last_answer = datetime.now() - latest_answer['created_at']
+                if time_since_last_answer >= timedelta(minutes=1):
+                    return jsonify({
+                        "question_id": "is_afraid",
+                        "question_text": "Are you afraid of Maths?",
+                        "type": "yes_no"
+                    })
+
+            # Case 3: They have answered the fear question.
+            if latest_answer['question'] == 'is_afraid':
+                # If they are not afraid, the survey is done.
+                if latest_answer['response'] == 'No':
+                    return jsonify({"status": "complete"}) 
+                
+                # If they are afraid, check if it's time for the reasons question.
+                # This works for "after 2 minutes" or "on next login".
+                time_since_last_answer = datetime.now() - latest_answer['created_at']
+                if latest_answer['response'] == 'Yes' and time_since_last_answer >= timedelta(minutes=2):
+                     return jsonify({
+                        "question_id": "fear_reason",
+                        "question_text": "What makes you afraid of Maths?",
+                        "type": "multiple_choice",
+                        "options": [
+                            "I don’t understand the concepts",
+                            "I find word problems confusing",
+                            "I feel pressure during exams",
+                            "I don’t get enough support",
+                            "Other"
+                        ]
+                    })
+            
+            # If all applicable questions have been asked, survey is complete.
+            return jsonify({"status": "complete"})
+
+    except pymysql.MySQLError as e:
+        logging.error(f"Survey DB Error: {e}")
+        return jsonify({"error": "An internal error occurred"}), 500
+    finally:
+        if connection:
+            connection.close()
+
+
+@en_api.route('/survey/submit-response', methods=['POST'])
+def submit_survey_response():
+    if 'user_id' not in session:
+        return jsonify({"error": "User not authenticated"}), 401
+    
+    data = request.get_json()
+    if not data or 'question_id' not in data or 'response' not in data:
+        return jsonify({"error": "Invalid request data"}), 400
+
+    user_id = session['user_id']
+    question_id = data['question_id']
+    response = data['response']
+
+    connection = get_db_connection()
+    if not connection:
+        return jsonify({"error": "Database connection failed"}), 500
+
+    try:
+        with connection.cursor() as cursor:
+            sql = "INSERT INTO student_survey (user_id, question, response) VALUES (%s, %s, %s)"
+            cursor.execute(sql, (user_id, question_id, response))
+        connection.commit()
+        return jsonify({"status": "success", "message": "Response saved."}), 201
+    except pymysql.MySQLError as e:
+        logging.error(f"Survey submission error: {e}")
+        connection.rollback()
+        return jsonify({"error": "Failed to save response"}), 500
+    finally:
+        if connection:
+            connection.close()
+
 
 @en_api.route('/submit-feedback', methods=['POST'])
 def submit_feedback():
@@ -874,7 +1001,7 @@ def submit_feedback():
             'email': email,
             # Store as empty string if optional field is missing
             'feedback': feedback if feedback is not None else '',
-            'timestamp': datetime.datetime.utcnow()  # Add a server-side timestamp
+            'timestamp': datetime.now()  # Add a server-side timestamp
         }
 
         # Get a reference to the 'feedback' collection and add a new document
