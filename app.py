@@ -34,11 +34,12 @@ def auth():
 def get_db_connection():
     """Establishes a connection to the MySQL database."""
     try:
-        connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='######',
+        connection = pymysql.connect(host='mysql-199237-0.cloudclusters.net',
+                                     user='admin',
+                                     password='gGVijwe9',
                                      db='db_novamaths',
                                      charset='utf8mb4',
+                                     port=19947,
                                      cursorclass=pymysql.cursors.DictCursor)
         return connection
     except pymysql.MySQLError as e:
@@ -320,7 +321,34 @@ def dashboard():
     if 'user_id' in session:
         return f"<h1>Welcome to the Dashboard, {session['user_name']}!</h1><p>Your user type is: {session['user_type']}</p><a href='/logout'>Logout</a>"
     else:
-        return redirect(url_for('auth_page'))
+        return redirect(url_for('auth'))
+
+@app.route('/app')
+def main_app():
+    """The main Nova Maths application with language support."""
+    if 'user_id' not in session:
+        return redirect(url_for('auth'))
+    
+    # Get user's language preference from database
+    connection = get_db_connection()
+    if not connection:
+        return "Database connection failed", 500
+    
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT med_ins FROM tbl_user_login WHERE user_id = %s", (session['user_id'],))
+            user = cursor.fetchone()
+            
+            if user:
+                template = 'index_hn.html' if user['med_ins'] == 'Hindi' else 'index_en.html'
+                return render_template(template, user_id=session['user_id'], user_name=session['user_name'])
+            else:
+                return "User not found", 404
+    except Exception as e:
+        return "Database error", 500
+    finally:
+        if connection:
+            connection.close()
 
 @app.route('/logout')
 def logout():

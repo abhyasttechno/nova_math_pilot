@@ -2,7 +2,7 @@ import os
 import json
 import re
 import mimetypes
-from flask import request, jsonify, Blueprint,session
+from flask import request, jsonify, Blueprint,session, redirect, render_template
 # Use google.generativeai instead of google.genai based on newer library versions
 from google import genai
 from google.genai import types
@@ -11,7 +11,9 @@ import tempfile
 import shutil
 from custom_utils import get_firebase_db_client, get_client, call_gemini, call_ama_gemini
 import pymysql.cursors
+import html
 from datetime import timedelta,datetime
+from datetime import date
 logging.basicConfig(level=logging.INFO)
 
 en_api = Blueprint('en_api', __name__, url_prefix='/en-api')
@@ -19,8 +21,8 @@ en_api = Blueprint('en_api', __name__, url_prefix='/en-api')
 # --- Model Configuration ---
 # Choose a model appropriate for the task (multimodal if handling files)
 # Changed to 1.5 flash - good balance
-MODEL_NAME = "gemini-2.5-flash-preview-04-17"
-CHAT_MODEL = "gemini-2.0-flash-lite"
+MODEL_NAME = "gemini-2.5-flash-lite"
+CHAT_MODEL = "gemini-2.5-flash-lite"
 
 def get_db_connection():
     """Establishes a connection to the MySQL database."""
@@ -251,6 +253,248 @@ Generate exactly {no_questions} practice problems based on the core concepts dem
 
     return parts
 
+def analyze_submission(question, solution):
+    """
+    Analyze a problem + solution pair and return a dict:
+      { category, category_description, area_improvement, status }
+
+    Notes:
+      - category = question_type (e.g., Algebra, Geometry, Calculus)
+      - category_description = chapter (e.g., Quadratic Equations, Limits)
+      - area_improvement must be a compact actionable explanation combining:
+          * what concept/skill is weak
+          * why the student is confused at this step
+          * concise steps to improve
+      - status = 1 if solution is correct, otherwise 0
+      - If status == 1 then area_improvement is set to "NA"
+      - Model is instructed to RETURN ONLY A JSON OBJECT (robust parsing included)
+    """
+    prompt = f"""
+                You are an expert math tutor and grader.
+
+                Given the practice problem and a student's provided solution, determine whether the solution is correct.
+                If correct: set "area_of_improvement" = "NA" and "status" = 1.
+                If incorrect or partially correct: produce a single compact "area_of_improvement" that explains:
+                - the specific concept/skill the student is struggling with,
+                - why they are likely confused at any step,
+                - brief concrete actions to improve (1-3 short bullets or sentences).
+
+                Also provide:
+                - question_type: e.g., "Algebra", "Trigonometry", "Calculus", "Geometry", etc.
+                - chapter: e.g., "Quadratic Equations", "Trigonometric Identities", "Limits", etc.
+
+                Question:
+                {question}
+
+                Student Solution:
+                {solution}
+
+                Return ONLY a valid JSON object with these keys exactly:
+                {{ "question_type": "...", "chapter": "...", "area_of_improvement": "...", "status":"0_or_1" }}
+                
+                """
+
+    try:
+        resp = call_gemini(prompt)
+        raw = resp.text.strip() if hasattr(resp, "text") else str(resp).strip()
+        logging.info("analyze_submission: raw response length=%d", len(raw))
+
+        # Extract JSON block if present (```json``` or plain JSON)
+        match = re.search(r'```json\s*([\s\S]*?)\s*```', raw)
+        json_text = match.group(1).strip() if match else raw
+
+        # Parse JSON (try direct, else extract first {...} block)
+        try:
+            parsed = json.loads(json_text)
+        except Exception:
+            m = re.search(r'(\{[\s\S]*\})', raw)
+            if m:
+                parsed = json.loads(m.group(1))
+            else:
+                raise
+
+        # Primary fields (map to legacy keys)
+        question_type = (parsed.get('question_type') or parsed.get('category') or 'general').strip()
+        chapter = (parsed.get('chapter') or parsed.get('category_description') or '').strip()
+        area = (parsed.get('area_of_improvement') or parsed.get('area_improvement') or '').strip()
+        status_val = parsed.get('status', 0)
+        try:
+            status = int(status_val)
+        except Exception:
+            status = 0
+
+        # Enforce requirement: if status == 1 then area_improvement must be "NA"
+        if status == 1:
+            area = "NA"
+
+        # Ensure area is meaningful
+        if not area:
+            area = "NA" if status == 1 else "Area of improvement could not be determined."
+
+        # Return mapping using legacy keys for compatibility
+        return {
+            'category': question_type,
+            'category_description': chapter,
+            'area_improvement': area,
+            'status': status
+        }
+
+    except Exception as e:
+        logging.error("analyze_submission error: %s", e, exc_info=True)
+        # fallback safe response
+        return {
+            'category': 'general',
+            'category_description': 'Unknown',
+            'area_improvement': 'Could not analyze submission at this time.',
+            'status': 0
+        }
+
+
+def analyze_student_doubt(question_text, step_content, clarification_question):
+    """
+    Analyzes student doubt and returns structured information about the area of improvement.
+    """
+    prompt = f"""
+    You are an AI math mentor embedded inside a GenAI-powered learning app.
+
+    A student is solving a math question where the solution is shown step-by-step by AI. The student clicked on one specific step and asked a clarification question. This indicates a possible confusion at that point.
+
+    Your job:
+    Analyze the context and clearly describe the area_of_improvement — this should be a compact but helpful explanation that combines:
+    - What concept or skill the student is struggling with
+    - Why they might be confused at this step
+    - How they can overcome or improve it
+
+    Also provide:
+    - The question_type: (e.g., Algebra, Geometry, Calculus, etc. not limited to these only)
+    - The chapter: (e.g., Quadratic Equations, Coordinate Geometry, Limits, etc. not limited to these only)
+
+
+    Context:
+    - Question: {question_text}
+    - Step Content: {step_content}
+    - Clarification Question: {clarification_question}
+
+    Respond strictly in JSON format like this:
+    {{
+    "area_of_improvement": "...",
+    "question_type": "...",
+    "chapter": "..."
+        }}
+    """
+    
+    try:
+        response = call_gemini(prompt)
+        # Get the raw text content and strip whitespace
+        raw_ai_content = response.text.strip()
+        
+        if not raw_ai_content:
+            logging.error("Analyze student doubt AI returned empty content.")
+            return {
+                "area_of_improvement": "Unable to analyze - empty response",
+                "question_type": "Unknown",
+                "chapter": "Unknown"
+            }
+        
+        # Log raw content for debugging
+        logging.info(f"Raw AI Analyze Doubt Content: {raw_ai_content}")
+        
+        # --- Attempt to extract JSON from markdown code block ---
+        # Non-greedy match for content inside ```json ```
+        match = re.search(r'```json\s*([\s\S]*?)\s*```', raw_ai_content)
+        
+        json_content_to_parse = ""
+        if match:
+            # Extract content from the first capturing group
+            json_content_to_parse = match.group(1).strip()
+            logging.info("Extracted JSON from markdown block in analyze_student_doubt.")
+        else:
+            # If no markdown block found, assume the entire content MIGHT be JSON
+            json_content_to_parse = raw_ai_content
+            logging.warning("No ```json ``` block found in analyze_student_doubt. Attempting to parse raw content as JSON.")
+        
+        if not json_content_to_parse:
+            logging.error("Extracted or raw content to parse is empty in analyze_student_doubt.")
+            return {
+                "area_of_improvement": "Unable to analyze - empty content",
+                "question_type": "Unknown",
+                "chapter": "Unknown"
+            }
+        
+        # Parse the extracted JSON content
+        result = json.loads(json_content_to_parse)
+        return result
+        
+    except json.JSONDecodeError as e:
+        logging.error(f"Failed to parse JSON response from analyze_student_doubt: {e}")
+        logging.error(f"Raw response: {response.text}")
+        # Return default values if parsing fails
+        return {
+            "area_of_improvement": "Unable to analyze - parsing error",
+            "question_type": "Unknown",
+            "chapter": "Unknown"
+        }
+    except Exception as e:
+        logging.error(f"Error in analyze_student_doubt: {e}")
+        return {
+            "area_of_improvement": "Unable to analyze - system error",
+            "question_type": "Unknown", 
+            "chapter": "Unknown"
+        }
+
+
+def store_improvement_data(area_improvement, category, category_description, status=0):
+    """
+    Stores improvement data in the MySQL database.
+    """
+    id = session['user_id']
+    logging.info(f"Storing improvement data for user_id: {id}")
+    connection = get_db_connection()
+    if not connection:
+        logging.error("Failed to connect to database for storing improvement data")
+        return False
+    
+    try:
+        with connection.cursor() as cursor:
+            # Debug: Check if improvements table exists
+            try:
+                cursor.execute("SHOW TABLES LIKE 'improvements'")
+                table_exists = cursor.fetchone()
+                logging.info(f"Improvements table exists: {table_exists}")
+            except Exception as e:
+                logging.error(f"Error checking improvements table: {e}")
+            
+            sql = """INSERT INTO improvements 
+                     (id, area_improvement, category, category_description, timestamp, status) 
+                     VALUES (%s, %s, %s, %s, %s, %s)"""
+            
+            timestamp = datetime.now().isoformat()
+            try:
+                # Ensure id is stored as string to match TEXT column type
+                cursor.execute(sql, (str(id), area_improvement, category, category_description, timestamp, status))
+            except pymysql.MySQLError as e:
+                logging.error(f"SQL Error in store_improvement_data: {e}")
+                # Try to get table structure to debug
+                try:
+                    cursor.execute("DESCRIBE improvements")
+                    table_structure = cursor.fetchall()
+                    logging.error(f"Table structure in store_improvement_data: {table_structure}")
+                except Exception as desc_error:
+                    logging.error(f"Could not describe table in store_improvement_data: {desc_error}")
+                raise e
+        
+        connection.commit()
+        logging.info(f"Successfully stored improvement data: {category}")
+        return True
+        
+    except pymysql.MySQLError as e:
+        logging.error(f"Database error storing improvement data: {e}")
+        connection.rollback()
+        return False
+    finally:
+        if connection:
+            connection.close()
+
 
 @en_api.route('/solve-math', methods=['POST'])
 def solve_math():
@@ -326,7 +570,7 @@ def solve_math():
         # For a single user turn, provide a list containing one Content object.
         # The 'parts' argument within Content takes the list of Part objects we built.
         response = get_client().models.generate_content(
-            model="gemini-2.5-flash-preview-04-17",
+            model="gemini-2.5-flash-lite",
             contents=[types.Content(role="user", parts=prompt_parts)],
             # stream=False # Default is False, explicitly set if needed
         )
@@ -430,8 +674,7 @@ def check():
             mime_type = solution_file_storage.mimetype
 
             if not mime_type or (not mime_type.startswith('image/') and mime_type != 'application/pdf'):
-                logging.warning(
-                    f"Unsupported file type uploaded: {mime_type}. Skipping file.")
+                logging.warning(f"Unsupported file type uploaded: {mime_type}. Skipping file.")
                 # Consider returning an error if file type is invalid
                 # return jsonify({"error": f"Unsupported file type: {mime_type}. Please upload an image or PDF."}), 400
             else:
@@ -486,7 +729,7 @@ def check():
         # For a single user turn, provide a list containing one Content object.
         # The 'parts' argument within Content takes the list of Part objects we built.
         response = get_client().models.generate_content(
-            model="gemini-2.5-flash-preview-04-17",
+            model="gemini-2.5-flash-lite",
             contents=[types.Content(role="user", parts=prompt_parts)],
             # stream=False # Default is False, explicitly set if needed
         )
@@ -496,6 +739,21 @@ def check():
 
             check_result = response.text
             logging.info(f"solution text length: {check_result}")
+            # --- NEW: analyze and store improvement data for this check_response ---
+            try:
+                analysis = analyze_submission(problem_text, check_result)
+                logging.info("Analysis result: %s", analysis)
+
+                store_success = store_improvement_data(
+                    area_improvement=analysis.get('area_improvement', 'NA'),
+                    category=analysis.get('category', 'general'),
+                    category_description=analysis.get('category_description', ''),
+                    status=int(analysis.get('status', 0))
+                )
+                logging.info("store_improvement_data returned: %s", store_success)
+            except Exception as e:
+                logging.error("Error during analyze/store for /check: %s", e, exc_info=True)
+            # --- end analyze/store block ---
 
         except ValueError:
             # This might occur if the response structure is unexpected or blocked in a way
@@ -685,6 +943,38 @@ def clarify_step():
                 return jsonify({"error": f"AI clarification generation stopped unexpectedly ({finish_reason})."}), 500
             return jsonify({"error": "The AI returned an empty clarification response."}), 500
 
+        # --- Analyze Student Doubt and Store in Database ---
+        try:
+            # Extract step content from the full solution
+            step_pattern = rf"### Step {step_number}:(.*?)(?=### Step {step_number + 1}:|### Final Answer:|$)"
+            step_match = re.search(step_pattern, full_solution, re.DOTALL)
+            step_content = step_match.group(1).strip() if step_match else f"Step {step_number} content not found"
+            
+            # Analyze the student's doubt
+            doubt_analysis = analyze_student_doubt(
+                question_text=original_problem_text,
+                step_content=step_content,
+                clarification_question=user_question
+            )
+            
+            # Store the improvement data in database
+            store_success = store_improvement_data(
+                area_improvement=doubt_analysis.get('area_of_improvement', ''),
+                category=doubt_analysis.get('question_type', ''),
+                category_description=doubt_analysis.get('chapter', ''),
+                status=0  # default unresolved
+            )
+            
+            if store_success:
+                logging.info(f"Successfully stored doubt analysis for step {step_number}")
+            else:
+                logging.warning(f"Failed to store doubt analysis for step {step_number}")
+                
+        except Exception as e:
+            logging.error(f"Error during doubt analysis and storage: {e}")
+            # Don't fail the entire request if analysis/storage fails
+            # The clarification is still provided to the user
+
         return jsonify({"clarification": clarification_text})
 
     except Exception as e:
@@ -719,7 +1009,7 @@ def practice():
         # response = model.generate_content(prompt_parts)
 
         response = get_client().models.generate_content(
-            model="gemini-2.0-flash",
+            model="gemini-2.5-flash-lite",
             contents=[types.Content(role="user", parts=prompt_parts)]
             # stream=False # Default is False, explicitly set if needed
         )
@@ -780,7 +1070,7 @@ def refresher():
     {{"question": "<Problem 2>", "solution": "<Solution 2 as plain string>"}}
     // Add more solved questions here
     ]
-}}"""
+    }}"""
     refresher_prompt += refresher_prompt + \
         "identified concept : " + identified_concept
 
@@ -1020,3 +1310,118 @@ def submit_feedback():
         # Log the error properly in a real application
         # Internal Server
         return jsonify({"error": "An error occurred while saving feedback."}), 500
+
+
+
+
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    """Custom JSON encoder for handling datetime objects"""
+    def default(self, obj):
+        if isinstance(obj, (datetime, date)):
+            return obj.isoformat()
+        return super().default(obj)
+
+def sanitize_data(data):
+    """Sanitize and escape data for JSON serialization"""
+    if isinstance(data, dict):
+        return {k: sanitize_data(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [sanitize_data(item) for item in data]
+    elif isinstance(data, str):
+        return html.escape(data).replace("'", "\\'")
+    return data
+
+@en_api.route('/profile')
+def profile():
+    """Render the user profile page with improvement areas."""
+    if 'user_id' not in session:
+        return redirect('/')
+    
+    user_id = session['user_id']
+    logging.info(f"Profile route called for user_id: {user_id}")
+    connection = get_db_connection()
+    
+    if not connection:
+        logging.error("Database connection failed")
+        return "Database connection failed", 500
+    
+    try:
+        with connection.cursor() as cursor:
+            # Get user details
+            cursor.execute("SELECT * FROM tbl_user_login WHERE user_id = %s", (user_id,))
+            user = cursor.fetchone()
+            
+            if not user:
+                return "User not found", 404
+            
+            # Get all improvement areas for the user
+            cursor.execute("""
+                SELECT area_improvement, category, category_description, status
+                FROM improvements 
+                WHERE id = %s 
+                ORDER BY timestamp DESC
+            """, (str(user_id),))
+            improvements = cursor.fetchall()
+            logging.info(f"Fetched {len(improvements)} improvements for user {user_id}")
+
+            # Group improvements by category
+            categories = {}
+            for improvement in improvements:
+                category_name = improvement['category']
+                if category_name not in categories:
+                    categories[category_name] = {
+                        'name': category_name,
+                        'improvements': []
+                    }
+                
+                # Add improvement to the category
+                categories[category_name]['improvements'].append({
+                    'title': improvement['category_description'],
+                    'suggestion': improvement['area_improvement'],
+                    'icon': 'bi bi-lightbulb-fill',
+                    'status': 0
+                })
+
+            # Convert dictionary to list format
+            categories_list = [
+                {
+                    'name': category_data['name'],
+                    'improvements': category_data['improvements']
+                }
+                for category_data in categories.values()
+            ]
+
+            # Sanitize and convert to JSON strings properly
+            try:
+                sanitized_categories = sanitize_data(categories_list)
+                # categories_json = json.dumps(sanitized_categories, cls=DateTimeEncoder, ensure_ascii=False)
+                # user_json = json.dumps(user, cls=DateTimeEncoder, ensure_ascii=False)
+                if isinstance(sanitized_categories, str):
+                    try:
+                        sanitized_categories = json.loads(sanitized_categories)
+                    except Exception:
+                        # fall back to empty list to avoid breaking the page
+                        sanitized_categories = []
+                
+                logging.info("Successfully serialized user and categories data")
+                logging.info(f"Categories JSON: {sanitized_categories}")
+                logging.info(f"User JSON: {user}")
+                
+                return render_template('profile.html', 
+                                    user=user,
+                                    categories=sanitized_categories)
+            
+            except Exception as json_error:
+                logging.error(f"JSON serialization error: {json_error}")
+                return "Error processing data", 500
+    
+    except pymysql.MySQLError as e:
+        logging.error(f"Profile DB Error: {e}")
+        return "Database error occurred", 500
+    finally:
+        if connection:
+            connection.close()
+
+
