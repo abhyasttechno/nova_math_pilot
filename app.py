@@ -34,12 +34,11 @@ def auth():
 def get_db_connection():
     """Establishes a connection to the MySQL database."""
     try:
-        connection = pymysql.connect(host='mysql-199237-0.cloudclusters.net',
-                                     user='admin',
-                                     password='gGVijwe9',
+        connection = pymysql.connect(host='localhost',
+                                     user='root',
+                                     password='######',
                                      db='db_novamaths',
                                      charset='utf8mb4',
-                                     port=19947,
                                      cursorclass=pymysql.cursors.DictCursor)
         return connection
     except pymysql.MySQLError as e:
