@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
+os.environ['GEMINI_API_KEY'] = "GEMINI_API_KEY"
 MYSQL_HOST_NAME = "HOST_NAME"
 MYSQL_USER_NAME = "USER_NAME"
 MYSQL_PASSWORD = "PASSWORD"
