@@ -9,7 +9,7 @@ from google.genai import types
 import logging
 import tempfile
 import shutil
-from custom_utils import get_firebase_db_client, get_client, call_gemini, call_ama_gemini
+from custom_utils import get_client, call_gemini, call_ama_gemini
 import pymysql.cursors
 from datetime import timedelta,datetime
 logging.basicConfig(level=logging.INFO)
@@ -966,57 +966,3 @@ def submit_survey_response():
     finally:
         if connection:
             connection.close()
-
-
-@en_api.route('/submit-feedback', methods=['POST'])
-def submit_feedback():
-    db = get_firebase_db_client()
-    if db is None:
-        print("Database not initialized.")
-        # Internal Server Error
-        return jsonify({"error": "Database service unavailable."}), 500
-
-    try:
-        # Get data from the incoming JSON request
-        data = request.json
-        rating = data.get('rating')
-        email = data.get('email')
-        feedback = data.get('feedback')
-
-        # Basic Server-Side Validation
-        if rating is None or not isinstance(rating, int) or rating < 1 or rating > 5:
-            # Bad Request
-            return jsonify({"error": "Invalid or missing rating."}), 400
-        # More robust email validation possible
-        if email is None or not isinstance(email, str) or "@" not in email:
-            # Bad Request
-            return jsonify({"error": "Invalid or missing email address."}), 400
-        # Feedback is optional, no validation needed beyond type check
-        if feedback is not None and not isinstance(feedback, str):
-            return jsonify({"error": "Invalid feedback format."}), 400
-
-        # Data structure to store in Firestore
-        feedback_entry = {
-            'rating': rating,
-            'email': email,
-            # Store as empty string if optional field is missing
-            'feedback': feedback if feedback is not None else '',
-            'timestamp': datetime.now()  # Add a server-side timestamp
-        }
-
-        # Get a reference to the 'feedback' collection and add a new document
-        # Firestore automatically generates a unique ID for the document
-        doc_ref = db.collection('feedback').add(feedback_entry)
-
-        print(
-            f"Feedback successfully written to Firestore. Document ID: {doc_ref[1].id}")
-
-        # Return a success response
-        # OK
-        return jsonify({"message": "Feedback submitted successfully!", "id": doc_ref[1].id}), 200
-
-    except Exception as e:
-        print(f"Error submitting feedback: {e}")
-        # Log the error properly in a real application
-        # Internal Server
-        return jsonify({"error": "An error occurred while saving feedback."}), 500

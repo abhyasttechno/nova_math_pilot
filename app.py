@@ -12,7 +12,17 @@ import io
 from flask import send_file
 from datetime import timedelta
 from functools import wraps
-from flask import Response 
+from flask import Response
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
+MYSQL_HOST_NAME = os.getenv('MYSQL_HOST_NAME', 'localhost')
+MYSQL_USER_NAME = os.getenv('MYSQL_USER_NAME', 'root')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', '######')  # Replace with your actual password
+MYSQL_DATABASE_NAME = os.getenv('MYSQL_DATABASE_NAME', 'db_novamaths')
+MYSQL_PORT = int(os.getenv('MYSQL_PORT', 3306))  # Default MySQL port is 3306
 
 # --- Initialize Flask App ---
 app = Flask(__name__)
@@ -34,10 +44,11 @@ def auth():
 def get_db_connection():
     """Establishes a connection to the MySQL database."""
     try:
-        connection = pymysql.connect(host='localhost',
-                                     user='root',
-                                     password='######',
-                                     db='db_novamaths',
+        connection = pymysql.connect(host=MYSQL_HOST_NAME,
+                                     user=MYSQL_USER_NAME,
+                                     password=MYSQL_PASSWORD,
+                                     db=MYSQL_DATABASE_NAME,
+                                     port=MYSQL_PORT,
                                      charset='utf8mb4',
                                      cursorclass=pymysql.cursors.DictCursor)
         return connection
