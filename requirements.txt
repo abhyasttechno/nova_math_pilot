@@ -3,4 +3,7 @@ flask
 flask-cors
 langchain-google-genai
 gunicorn
-firebase-admin
+pandas
+pymysql
+python-dotenv
+openpyxl
