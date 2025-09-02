@@ -35,7 +35,7 @@ const PRACTICE_API_ENDPOINT = `${API_BASE_URL}/practice`;
 const AMA_API_ENDPOINT = `${API_BASE_URL}/ama`;
 const CHECK_API_ENDPOINT = `${API_BASE_URL}/check`;
 const REFRESHER_API_ENDPOINT = `${API_BASE_URL}/refresher`;
-const FEEDBACK_API_ENDPOINT = `${API_BASE_URL}/submit-feedback`;
+const FEEDBACK_API_ENDPOINT = `${API_BASE_URL}/survey/submit-response`;
 
 // --- DOM Elements (most from original index.html) ---
 const mathProblemText = document.getElementById('mathProblemText');
