@@ -22,7 +22,7 @@ def get_client():
 def call_gemini(prompt):
     prompt_parts = [types.Part.from_text(text=prompt)]
     response = get_client().models.generate_content(
-        model="gemini-2.0-flash-lite",
+        model="gemini-2.5-flash-lite",
         contents=[types.Content(role="user", parts=prompt_parts)],
         # stream=False # Default is False, explicitly set if needed
     )
@@ -32,7 +32,7 @@ def call_gemini(prompt):
 def call_ama_gemini(prompt):
     prompt_parts = [types.Part.from_text(text=prompt)]
     response = get_client().models.generate_content(
-        model="gemini-2.0-flash-lite",
+        model="gemini-2.5-flash-lite",
         contents=[types.Content(role="user", parts=prompt_parts)],
         # stream=False # Default is False, explicitly set if needed
     )

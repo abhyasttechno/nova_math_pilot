@@ -18,11 +18,13 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
+
 MYSQL_HOST_NAME = os.getenv('MYSQL_HOST_NAME', 'localhost')
 MYSQL_USER_NAME = os.getenv('MYSQL_USER_NAME', 'root')
 MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', '######')  # Replace with your actual password
 MYSQL_DATABASE_NAME = os.getenv('MYSQL_DATABASE_NAME', 'db_novamaths')
 MYSQL_PORT = int(os.getenv('MYSQL_PORT', 3306))  # Default MySQL port is 3306
+
 
 # --- Initialize Flask App ---
 app = Flask(__name__)
@@ -331,7 +333,34 @@ def dashboard():
     if 'user_id' in session:
         return f"<h1>Welcome to the Dashboard, {session['user_name']}!</h1><p>Your user type is: {session['user_type']}</p><a href='/logout'>Logout</a>"
     else:
-        return redirect(url_for('auth_page'))
+        return redirect(url_for('auth'))
+
+@app.route('/app')
+def main_app():
+    """The main Nova Maths application with language support."""
+    if 'user_id' not in session:
+        return redirect(url_for('auth'))
+    
+    # Get user's language preference from database
+    connection = get_db_connection()
+    if not connection:
+        return "Database connection failed", 500
+    
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT med_ins FROM tbl_user_login WHERE user_id = %s", (session['user_id'],))
+            user = cursor.fetchone()
+            
+            if user:
+                template = 'index_hn.html' if user['med_ins'] == 'Hindi' else 'index_en.html'
+                return render_template(template, user_id=session['user_id'], user_name=session['user_name'])
+            else:
+                return "User not found", 404
+    except Exception as e:
+        return "Database error", 500
+    finally:
+        if connection:
+            connection.close()
 
 @app.route('/logout')
 def logout():
