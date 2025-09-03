@@ -12,18 +12,19 @@ import io
 from flask import send_file
 from datetime import timedelta
 from functools import wraps
-from flask import Response 
+from flask import Response
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "credentials.json"
-os.environ['GEMINI_API_KEY'] = "GEMINI_API_KEY"
-MYSQL_HOST_NAME = "HOST_NAME"
-MYSQL_USER_NAME = "USER_NAME"
-MYSQL_PASSWORD = "PASSWORD"
-MYSQL_DATABASE_NAME = "db_novamaths"
-MYSQL_PORT = 19947
+
+MYSQL_HOST_NAME = os.getenv('MYSQL_HOST_NAME', 'localhost')
+MYSQL_USER_NAME = os.getenv('MYSQL_USER_NAME', 'root')
+MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', '######')  # Replace with your actual password
+MYSQL_DATABASE_NAME = os.getenv('MYSQL_DATABASE_NAME', 'db_novamaths')
+MYSQL_PORT = int(os.getenv('MYSQL_PORT', 3306))  # Default MySQL port is 3306
+
 
 # --- Initialize Flask App ---
 app = Flask(__name__)

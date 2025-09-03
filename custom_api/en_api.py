@@ -1257,6 +1257,7 @@ def submit_survey_response():
         if connection:
             connection.close()
 
+
 class DateTimeEncoder(json.JSONEncoder):
     """Custom JSON encoder for handling datetime objects"""
     def default(self, obj):
@@ -1364,5 +1365,6 @@ def profile():
     finally:
         if connection:
             connection.close()
+
 
 
